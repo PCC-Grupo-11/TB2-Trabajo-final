@@ -1,6 +1,6 @@
 {
-  "latitude_min": 40.49888624741073,
-  "latitude_max": 40.912868795316655,
-  "longitude_min": -74.25473797275497,
-  "longitude_max": -73.70036545591262
+  "latitude_mean": 40.738398488212106,
+  "latitude_std": 0.08837409162173816,
+  "longitude_mean": -73.9210839466375,
+  "longitude_std": 0.07672297819812988
 }
