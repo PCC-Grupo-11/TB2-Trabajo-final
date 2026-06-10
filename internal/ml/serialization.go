@@ -28,10 +28,9 @@ func LoadModel(path string) (*Model, error) {
 }
 
 func SaveReport(report *TrainingReport, path string) error {
-	f, err := os.Create(path)
+	data, err := json.MarshalIndent(report, "", "  ")
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	return json.NewEncoder(f).Encode(report)
+	return os.WriteFile(path, data, 0644)
 }
