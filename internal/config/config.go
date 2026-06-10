@@ -3,7 +3,7 @@ package config
 import "os"
 
 const GlobalSeed = 42
-const BatchSize = 2048
+const BatchSize = 4096
 
 type Config struct {
 	DataPath        string
