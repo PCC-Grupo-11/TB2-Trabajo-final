@@ -6,8 +6,6 @@ import (
 	"os"
 	"time"
 
-	_ "net/http/pprof"
-
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/dataset"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/logger"
@@ -31,7 +29,7 @@ func main() {
 
 	logger.Info("dataset loaded", "records", ds.Len())
 
-	trainSet, valSet := ds.Split(ml.ValidationSplit)
+	trainSet, valSet := ds.Split(config.ValidationSplit)
 	logger.Info("dataset split", "train", trainSet.Len(), "val", valSet.Len())
 
 	datasetLoadingTime := time.Since(start).Seconds()

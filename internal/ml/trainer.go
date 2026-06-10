@@ -2,21 +2,11 @@ package ml
 
 import (
 	"math"
-	"runtime"
 	"sync"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/dataset"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/logger"
-	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/schema"
-)
-
-const (
-	LearningRate          = 3.0
-	Epochs                = 500
-	ValidationSplit       = 0.2
-	EarlyStoppingPatience = 15
-	MinImprovement        = 1e-3
 )
 
 type TrainingReport struct {
@@ -37,7 +27,6 @@ type TrainingReport struct {
 }
 
 func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
-	numWorkers := runtime.NumCPU()
 	totalWeights := m.NumClasses * m.FeatureCount
 
 	bestValLoss := float32(math.MaxFloat32)
@@ -53,7 +42,7 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
 	logger.Info("starting training",
 		"train_samples", numTrain,
 		"val_samples", valSet.Len(),
-		"workers", numWorkers,
+		"workers", config.NumWorkers,
 		"learning_rate", LearningRate,
 		"epochs", Epochs,
 		"patience", EarlyStoppingPatience,
@@ -66,8 +55,8 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
 
 		trainSet.Shuffle(config.GlobalSeed + int64(epoch))
 
-		batchCh := make(chan []dataset.Record, 5*numWorkers)
-		gradCh := make(chan *Gradient, 5*numWorkers)
+		batchCh := make(chan []dataset.Record, 5*config.NumWorkers)
+		gradCh := make(chan *Gradient, 5*config.NumWorkers)
 
 		// Batch producer
 		go func() {
@@ -82,8 +71,8 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
 		}()
 
 		var wg sync.WaitGroup
-		wg.Add(numWorkers)
-		for range numWorkers {
+		wg.Add(config.NumWorkers)
+		for range config.NumWorkers {
 			go func() {
 				defer wg.Done()
 				logits := make([]float32, m.NumClasses)
@@ -181,11 +170,11 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
 		EpochsTrained:       epochsTrained,
 		EarlyStopped:        earlyStopped,
 		TotalSamples:        numTrain + valSet.Len(),
-		FeatureCount:        schema.TotalFeatures,
-		NumClasses:          schema.NumClasses,
+		FeatureCount:        config.TotalFeatures,
+		NumClasses:          config.NumClasses,
 		LearningRate:        LearningRate,
 		ShuffleSeed:         int64(config.GlobalSeed),
-		ValidationSplit:     ValidationSplit,
+		ValidationSplit:     config.ValidationSplit,
 		ConfusionMatrix:     confusionMatrix,
 	}
 }

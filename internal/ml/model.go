@@ -4,10 +4,7 @@ import (
 	"math/rand"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
-	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/schema"
 )
-
-const weightInitScale = 0.05
 
 type Model struct {
 	FeatureCount int       `json:"feature_count"`
@@ -20,17 +17,17 @@ type Model struct {
 func NewModel() *Model {
 	rng := rand.New(rand.NewSource(config.GlobalSeed))
 
-	totalWeights := schema.TotalFeatures * schema.NumClasses
+	totalWeights := config.TotalFeatures * config.NumClasses
 	weights := make([]float32, totalWeights)
 	for i := range totalWeights {
 		weights[i] = (rng.Float32() - 0.5) * 2 * weightInitScale
 	}
 
 	return &Model{
-		FeatureCount: schema.TotalFeatures,
-		NumClasses:   schema.NumClasses,
+		FeatureCount: config.TotalFeatures,
+		NumClasses:   config.NumClasses,
 		Weights:      weights,
-		Biases:       make([]float32, schema.NumClasses),
+		Biases:       make([]float32, config.NumClasses),
 		Trained:      false,
 	}
 }

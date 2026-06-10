@@ -3,11 +3,9 @@ package ml
 import (
 	"sync"
 
+	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/dataset"
-	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/schema"
 )
-
-const L2Lambda float32 = 1e-4
 
 type Gradient struct {
 	WeightGrad []float32
@@ -16,10 +14,10 @@ type Gradient struct {
 
 var gradientPool = sync.Pool{
 	New: func() any {
-		totalWeights := schema.TotalFeatures * schema.NumClasses
+		totalWeights := config.TotalFeatures * config.NumClasses
 		return &Gradient{
 			WeightGrad: make([]float32, totalWeights),
-			BiasGrad:   make([]float32, schema.NumClasses),
+			BiasGrad:   make([]float32, config.NumClasses),
 		}
 	},
 }

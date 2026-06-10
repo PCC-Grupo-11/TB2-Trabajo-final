@@ -1,18 +1,15 @@
 package dataset
 
 import (
-	"runtime"
 	"sync"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 )
 
 func Load(path string) (*Dataset, error) {
-	rowBatchesCh := make(chan [][]string, 16)
-	recordBatchesCh := make(chan []Record, 16)
-	errCh := make(chan error, 1)
-
-	numWorkers := runtime.NumCPU()
+	rowBatchesCh := make(chan [][]string, channelBufferSize)
+	recordBatchesCh := make(chan []Record, channelBufferSize)
+	errCh := make(chan error, errChanBufferSize)
 
 	go func() {
 		defer close(errCh)
@@ -23,8 +20,8 @@ func Load(path string) (*Dataset, error) {
 	}()
 
 	var wg sync.WaitGroup
-	wg.Add(numWorkers)
-	for range numWorkers {
+	wg.Add(config.NumWorkers)
+	for range config.NumWorkers {
 		go func() {
 			defer wg.Done()
 			worker(rowBatchesCh, recordBatchesCh)

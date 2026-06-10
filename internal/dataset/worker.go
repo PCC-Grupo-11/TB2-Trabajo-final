@@ -3,7 +3,7 @@ package dataset
 import (
 	"strconv"
 
-	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/schema"
+	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 )
 
 func worker(
@@ -41,7 +41,7 @@ func parseRow(row []string) Record {
 
 	return Record{
 		Y: uint8(y),
-		Features: [13]SparseFeature{
+		Features: [featuresCount]SparseFeature{
 			{0, float32(timeSin)},
 			{1, float32(timeCos)},
 			{2, float32(weekSin)},
@@ -49,12 +49,12 @@ func parseRow(row []string) Record {
 			{4, float32(isWeekend)},
 			{5, float32(latZ)},
 			{6, float32(lonZ)},
-			{uint32(schema.AgencyOffset + agencyID), 1},
-			{uint32(schema.ComplaintOffset + complaintID), 1},
-			{uint32(schema.DescriptorOffset + descriptorID), 1},
-			{uint32(schema.LocationOffset + locationID), 1},
-			{uint32(schema.BoroughOffset + boroughID), 1},
-			{uint32(schema.ComboOffset + comboID), 1},
+			{uint32(config.AgencyOffset + agencyID), 1},
+			{uint32(config.ComplaintOffset + complaintID), 1},
+			{uint32(config.DescriptorOffset + descriptorID), 1},
+			{uint32(config.LocationOffset + locationID), 1},
+			{uint32(config.BoroughOffset + boroughID), 1},
+			{uint32(config.ComboOffset + comboID), 1},
 		},
 	}
 }

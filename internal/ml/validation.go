@@ -2,9 +2,9 @@ package ml
 
 import (
 	"math"
-	"runtime"
 	"sync"
 
+	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/dataset"
 )
 
@@ -19,13 +19,12 @@ func computeLoss(model *Model, valSet *dataset.Dataset) float32 {
 		return 0
 	}
 
-	numWorkers := runtime.NumCPU()
-	chunkSize := (len(samples) + numWorkers - 1) / numWorkers
+	chunkSize := (len(samples) + config.NumWorkers - 1) / config.NumWorkers
 
-	results := make(chan lossResult, numWorkers)
+	results := make(chan lossResult, config.NumWorkers)
 
 	var wg sync.WaitGroup
-	for w := range numWorkers {
+	for w := range config.NumWorkers {
 		start := w * chunkSize
 		if start >= len(samples) {
 			break
@@ -45,8 +44,8 @@ func computeLoss(model *Model, valSet *dataset.Dataset) float32 {
 			for _, sample := range chunk {
 				model.ComputeProbs(&sample, logits, probs)
 				p := float64(probs[sample.Y])
-				if p < 1e-15 {
-					p = 1e-15
+				if p < probFloor {
+					p = probFloor
 				}
 				loss -= math.Log(p)
 			}
@@ -84,13 +83,12 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 		return
 	}
 
-	numWorkers := runtime.NumCPU()
-	chunkSize := (n + numWorkers - 1) / numWorkers
+	chunkSize := (n + config.NumWorkers - 1) / config.NumWorkers
 
-	results := make(chan valResult, numWorkers)
+	results := make(chan valResult, config.NumWorkers)
 
 	var wg sync.WaitGroup
-	for w := range numWorkers {
+	for w := range config.NumWorkers {
 		start := w * chunkSize
 		if start >= n {
 			break
@@ -113,8 +111,8 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 				model.ComputeProbs(&sample, logits, probs)
 
 				p := float64(probs[sample.Y])
-				if p < 1e-15 {
-					p = 1e-15
+				if p < probFloor {
+					p = probFloor
 				}
 				res.loss -= math.Log(p)
 
@@ -135,7 +133,7 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 
 				diff := math.Abs(float64(bestClass - trueClass))
 				res.totalMAE += diff
-				if diff <= 1 {
+				if int(diff) <= accuracyAt1Threshold {
 					res.within1++
 				}
 			}

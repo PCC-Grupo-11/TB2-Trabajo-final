@@ -11,7 +11,7 @@ type SparseFeature struct {
 
 type Record struct {
 	Y        uint8
-	Features [13]SparseFeature
+	Features [featuresCount]SparseFeature
 }
 
 type Dataset struct {
