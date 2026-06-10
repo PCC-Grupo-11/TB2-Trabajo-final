@@ -2,9 +2,9 @@ package ml
 
 import "math"
 
-func Softmax(logits []float32) []float32 {
+func Softmax(logits, probs []float32) {
 	if len(logits) == 0 {
-		return nil
+		return
 	}
 
 	max := float32(-math.MaxFloat32)
@@ -14,7 +14,6 @@ func Softmax(logits []float32) []float32 {
 		}
 	}
 
-	probs := make([]float32, len(logits))
 	var sum float32
 
 	for i, v := range logits {
@@ -25,6 +24,4 @@ func Softmax(logits []float32) []float32 {
 	for i := range probs {
 		probs[i] /= sum
 	}
-
-	return probs
 }

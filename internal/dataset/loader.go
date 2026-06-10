@@ -3,6 +3,8 @@ package dataset
 import (
 	"runtime"
 	"sync"
+
+	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 )
 
 func Load(path string) (*Dataset, error) {
@@ -45,6 +47,6 @@ func Load(path string) (*Dataset, error) {
 	}
 
 	ds := &Dataset{Records: records}
-	ds.Shuffle()
+	ds.Shuffle(int64(config.GlobalSeed))
 	return ds, nil
 }

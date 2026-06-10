@@ -2,8 +2,6 @@ package dataset
 
 import (
 	"math/rand"
-
-	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 )
 
 type SparseFeature struct {
@@ -20,8 +18,8 @@ type Dataset struct {
 	Records []Record
 }
 
-func (ds *Dataset) Shuffle() {
-	rng := rand.New(rand.NewSource(config.GlobalSeed))
+func (ds *Dataset) Shuffle(seed int64) {
+	rng := rand.New(rand.NewSource(seed))
 	rng.Shuffle(len(ds.Records), func(i, j int) {
 		ds.Records[i], ds.Records[j] = ds.Records[j], ds.Records[i]
 	})
