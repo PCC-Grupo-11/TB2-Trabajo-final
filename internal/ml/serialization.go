@@ -2,7 +2,6 @@ package ml
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 )
 
@@ -26,29 +25,6 @@ func LoadModel(path string) (*Model, error) {
 		return nil, err
 	}
 	return &m, nil
-}
-
-func formatConfusionMatrix(mat [][]int) string {
-	if len(mat) == 0 {
-		return ""
-	}
-	nc := len(mat)
-	s := ""
-	// header
-	s += "      "
-	for j := 0; j < nc; j++ {
-		s += fmt.Sprintf("%4d ", j)
-	}
-	s += "\n"
-	// rows
-	for i := 0; i < nc; i++ {
-		s += fmt.Sprintf("%4d: ", i)
-		for j := 0; j < nc; j++ {
-			s += fmt.Sprintf("%4d ", mat[i][j])
-		}
-		s += "\n"
-	}
-	return s[:len(s)-1] // trim trailing newline
 }
 
 func SaveReport(report *TrainingReport, path string) error {

@@ -33,7 +33,7 @@ type TrainingReport struct {
 	LearningRate        float32 `json:"learning_rate"`
 	ShuffleSeed         int64   `json:"shuffle_seed"`
 	ValidationSplit     float64 `json:"validation_split"`
-	ConfusionMatrix     string `json:"confusion_matrix"`
+	ConfusionMatrix     [][]int `json:"confusion_matrix"`
 }
 
 func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
@@ -186,7 +186,7 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
 		LearningRate:        LearningRate,
 		ShuffleSeed:         int64(config.GlobalSeed),
 		ValidationSplit:     ValidationSplit,
-		ConfusionMatrix:     formatConfusionMatrix(confusionMatrix),
+		ConfusionMatrix:     confusionMatrix,
 	}
 }
 
