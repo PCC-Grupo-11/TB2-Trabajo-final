@@ -1,5 +1,5 @@
 .DS_Store
-docs/
+.docs/
 .venv/
 .env
 data/raw/*.csv

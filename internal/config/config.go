@@ -1,0 +1,24 @@
+package config
+
+import "os"
+
+type Config struct {
+	DataPath        string
+	ModelOutputPath string
+	MetadataPath    string
+}
+
+func Load() *Config {
+	return &Config{
+		DataPath:        getEnv("DATA_PATH", "data/training/nyc_311_features.csv"),
+		ModelOutputPath: getEnv("MODEL_OUTPUT_PATH", "model/model.json"),
+		MetadataPath:    getEnv("METADATA_OUTPUT_PATH", "model/training_report.json"),
+	}
+}
+
+func getEnv(key, defaultVal string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return defaultVal
+}
