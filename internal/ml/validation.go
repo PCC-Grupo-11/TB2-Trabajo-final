@@ -28,39 +28,19 @@ func computeLoss(model *Model, valSet *dataset.Dataset) float32 {
 		return 0
 	}
 
-	chunkSize := ceilDiv(len(samples), config.NumWorkers)
-
-	results := make(chan lossResult, config.NumWorkers)
-
-	var wg sync.WaitGroup
-	for w := range config.NumWorkers {
-		start := w * chunkSize
-		if start >= len(samples) {
-			break
-		}
-		end := min(start+chunkSize, len(samples))
-
-		wg.Add(1)
-		go func(chunk []dataset.Record) {
-			defer wg.Done()
-			logits, probs := allocForward(model.NumClasses)
+	results := parallelProcessChunks[lossResult](samples, config.NumWorkers, model.NumClasses,
+		func(chunk []dataset.Record, logits, probs []float32) lossResult {
 			var loss float64
-
 			for _, sample := range chunk {
 				loss += sampleLogLoss(model, &sample, logits, probs)
 			}
-			results <- lossResult{loss: loss, n: len(chunk)}
-		}(samples[start:end])
-	}
-
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
+			return lossResult{loss: loss, n: len(chunk)}
+		},
+	)
 
 	var totalLoss float64
 	var totalN int
-	for r := range results {
+	for _, r := range results {
 		totalLoss += r.loss
 		totalN += r.n
 	}
@@ -79,35 +59,18 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 	samples := valSet.Records
 	n := len(samples)
 	if n == 0 {
-		loss, accuracy, mae, accAt1 = 0, 0, 0, 0
 		return
 	}
 
-	chunkSize := ceilDiv(n, config.NumWorkers)
-
-	results := make(chan valResult, config.NumWorkers)
-
-	var wg sync.WaitGroup
-	for w := range config.NumWorkers {
-		start := w * chunkSize
-		if start >= n {
-			break
-		}
-		end := min(start+chunkSize, n)
-
-		wg.Add(1)
-		go func(chunk []dataset.Record) {
-			defer wg.Done()
-			logits, probs := allocForward(model.NumClasses)
+	results := parallelProcessChunks[valResult](samples, config.NumWorkers, model.NumClasses,
+		func(chunk []dataset.Record, logits, probs []float32) valResult {
 			nc := model.NumClasses
-
 			var res valResult
 			res.confusion = make([]int, nc*nc)
 			for _, sample := range chunk {
 				res.loss += sampleLogLoss(model, &sample, logits, probs)
 
 				bestClass, _ := argmax(probs)
-
 				trueClass := int(sample.Y)
 				res.confusion[trueClass*nc+bestClass]++
 				if bestClass == trueClass {
@@ -121,14 +84,9 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 				}
 			}
 			res.n = len(chunk)
-			results <- res
-		}(samples[start:end])
-	}
-
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
+			return res
+		},
+	)
 
 	var totalLoss, totalMAE float64
 	var totalCorrect, totalWithin1, totalN int
@@ -139,7 +97,7 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 		confusionMatrix[i] = make([]int, nc)
 	}
 
-	for r := range results {
+	for _, r := range results {
 		totalLoss += r.loss
 		totalCorrect += r.correct
 		totalWithin1 += r.within1
@@ -157,6 +115,47 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 	accuracy = float64(totalCorrect) / float64(totalN)
 	mae = totalMAE / float64(totalN)
 	accAt1 = float64(totalWithin1) / float64(totalN)
-
 	return
+}
+
+func parallelProcessChunks[T any](
+	samples []dataset.Record,
+	numWorkers int,
+	numClasses int,
+	fn func(chunk []dataset.Record, logits, probs []float32) T,
+) []T {
+	n := len(samples)
+	if n == 0 {
+		return nil
+	}
+
+	chunkSize := ceilDiv(n, numWorkers)
+	results := make(chan T, numWorkers)
+
+	var wg sync.WaitGroup
+	for w := range numWorkers {
+		start := w * chunkSize
+		if start >= n {
+			break
+		}
+		end := min(start+chunkSize, n)
+
+		wg.Add(1)
+		go func(chunk []dataset.Record) {
+			defer wg.Done()
+			logits, probs := allocForward(numClasses)
+			results <- fn(chunk, logits, probs)
+		}(samples[start:end])
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	out := make([]T, 0, numWorkers)
+	for r := range results {
+		out = append(out, r)
+	}
+	return out
 }
