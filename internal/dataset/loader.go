@@ -44,6 +44,6 @@ func Load(path string) (*Dataset, error) {
 	}
 
 	ds := &Dataset{Records: records}
-	ds.Shuffle(int64(config.GlobalSeed))
+	ds.Shuffle(config.GlobalSeed)
 	return ds, nil
 }

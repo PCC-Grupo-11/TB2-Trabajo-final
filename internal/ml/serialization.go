@@ -27,7 +27,7 @@ func LoadModel(path string) (*Model, error) {
 	return &m, nil
 }
 
-func SaveReport(report *TrainingReport, path string) error {
+func SaveReport(report TrainingReport, path string) error {
 	data, err := json.MarshalIndent(report, "", "  ")
 	if err != nil {
 		return err

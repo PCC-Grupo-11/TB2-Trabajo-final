@@ -11,8 +11,8 @@ type Config struct {
 func Load() *Config {
 	return &Config{
 		DataPath:        getEnv("DATA_PATH", "data/training/nyc_311_features.csv"),
-		ModelOutputPath: getEnv("MODEL_OUTPUT_PATH", "artifacts/models/latest.json"),
-		MetadataPath:    getEnv("METADATA_OUTPUT_PATH", "artifacts/metadata/training_report.json"),
+		ModelOutputPath: getEnv("MODEL_OUTPUT_PATH", "model/model.json"),
+		MetadataPath:    getEnv("METADATA_OUTPUT_PATH", "model/training_report.json"),
 	}
 }
 

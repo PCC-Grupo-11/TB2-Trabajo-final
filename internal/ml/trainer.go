@@ -26,7 +26,7 @@ type TrainingReport struct {
 	ConfusionMatrix     [][]int `json:"confusion_matrix"`
 }
 
-func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
+func (m *Model) Train(trainSet, valSet *dataset.Dataset) TrainingReport {
 	totalWeights := m.NumClasses * m.FeatureCount
 
 	bestValLoss := float32(math.MaxFloat32)
@@ -62,16 +62,15 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
 		go func() {
 			defer close(batchCh)
 			for i := 0; i < numTrain; i += config.BatchSize {
-				end := i + config.BatchSize
-				if end > numTrain {
-					end = numTrain
-				}
+				end := min(i+config.BatchSize, numTrain)
 				batchCh <- trainSamples[i:end]
 			}
 		}()
 
 		var wg sync.WaitGroup
 		wg.Add(config.NumWorkers)
+
+		// Worker goroutines
 		for range config.NumWorkers {
 			go func() {
 				defer wg.Done()
@@ -96,6 +95,7 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
 			BiasGrad:   make([]float32, m.NumClasses),
 		}
 
+		// Aggregate gradients
 		for grad := range gradCh {
 			for i := range totalGrad.WeightGrad {
 				totalGrad.WeightGrad[i] += grad.WeightGrad[i]
@@ -162,7 +162,7 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) *TrainingReport {
 
 	valLoss, accuracy, mae, accAt1, confusionMatrix := computeValidation(m, valSet)
 
-	return &TrainingReport{
+	return TrainingReport{
 		FinalValidationLoss: valLoss,
 		Accuracy:            accuracy,
 		MAE:                 mae,

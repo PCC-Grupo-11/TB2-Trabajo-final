@@ -13,6 +13,15 @@ type lossResult struct {
 	n    int
 }
 
+func sampleLogLoss(model *Model, sample *dataset.Record, logits, probs []float32) float64 {
+	model.ComputeProbs(sample, logits, probs)
+	p := float64(probs[sample.Y])
+	if p < probFloor {
+		p = probFloor
+	}
+	return -math.Log(p)
+}
+
 func computeLoss(model *Model, valSet *dataset.Dataset) float32 {
 	samples := valSet.Records
 	if len(samples) == 0 {
@@ -29,10 +38,7 @@ func computeLoss(model *Model, valSet *dataset.Dataset) float32 {
 		if start >= len(samples) {
 			break
 		}
-		end := start + chunkSize
-		if end > len(samples) {
-			end = len(samples)
-		}
+		end := min(start+chunkSize, len(samples))
 
 		wg.Add(1)
 		go func(chunk []dataset.Record) {
@@ -42,12 +48,7 @@ func computeLoss(model *Model, valSet *dataset.Dataset) float32 {
 			var loss float64
 
 			for _, sample := range chunk {
-				model.ComputeProbs(&sample, logits, probs)
-				p := float64(probs[sample.Y])
-				if p < probFloor {
-					p = probFloor
-				}
-				loss -= math.Log(p)
+				loss += sampleLogLoss(model, &sample, logits, probs)
 			}
 			results <- lossResult{loss: loss, n: len(chunk)}
 		}(samples[start:end])
@@ -93,10 +94,7 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 		if start >= n {
 			break
 		}
-		end := start + chunkSize
-		if end > n {
-			end = n
-		}
+		end := min(start+chunkSize, n)
 
 		wg.Add(1)
 		go func(chunk []dataset.Record) {
@@ -108,22 +106,9 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 			var res valResult
 			res.confusion = make([]int, nc*nc)
 			for _, sample := range chunk {
-				model.ComputeProbs(&sample, logits, probs)
+				res.loss += sampleLogLoss(model, &sample, logits, probs)
 
-				p := float64(probs[sample.Y])
-				if p < probFloor {
-					p = probFloor
-				}
-				res.loss -= math.Log(p)
-
-				bestClass := 0
-				bestProb := float32(0)
-				for c, pc := range probs {
-					if pc > bestProb {
-						bestProb = pc
-						bestClass = c
-					}
-				}
+				bestClass, _ := argmax(probs)
 
 				trueClass := int(sample.Y)
 				res.confusion[trueClass*nc+bestClass]++
@@ -163,8 +148,8 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 		totalMAE += r.totalMAE
 		totalN += r.n
 
-		for i := 0; i < nc; i++ {
-			for j := 0; j < nc; j++ {
+		for i := range nc {
+			for j := range nc {
 				confusionMatrix[i][j] += r.confusion[i*nc+j]
 			}
 		}

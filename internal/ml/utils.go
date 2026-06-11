@@ -2,6 +2,18 @@ package ml
 
 import "math"
 
+func argmax(probs []float32) (int, float32) {
+	bestClass := 0
+	bestProb := float32(0)
+	for c, p := range probs {
+		if p > bestProb {
+			bestProb = p
+			bestClass = c
+		}
+	}
+	return bestClass, bestProb
+}
+
 func Softmax(logits, probs []float32) {
 	if len(logits) == 0 {
 		return

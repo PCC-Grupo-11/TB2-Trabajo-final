@@ -26,13 +26,5 @@ func (m *Model) Predict(record *dataset.Record) (int, float32) {
 	probs := make([]float32, m.NumClasses)
 	m.ComputeProbs(record, logits, probs)
 
-	bestClass := 0
-	bestProb := float32(0)
-	for c, p := range probs {
-		if p > bestProb {
-			bestProb = p
-			bestClass = c
-		}
-	}
-	return bestClass, bestProb
+	return argmax(probs)
 }
