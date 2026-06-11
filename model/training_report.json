@@ -8,7 +8,7 @@
   "total_samples": 2904438,
   "feature_count": 1097,
   "num_classes": 8,
-  "training_time_seconds": 259.27400370799995,
+  "training_time_seconds": 80.903601416,
   "learning_rate": 3,
   "shuffle_seed": 42,
   "validation_split": 0.2,
