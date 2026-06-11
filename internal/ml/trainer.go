@@ -74,8 +74,7 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) TrainingReport {
 		for range config.NumWorkers {
 			go func() {
 				defer wg.Done()
-				logits := make([]float32, m.NumClasses)
-				probs := make([]float32, m.NumClasses)
+				logits, probs := allocForward(m.NumClasses)
 
 				for batch := range batchCh {
 					grad := getGradient()
@@ -136,9 +135,7 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) TrainingReport {
 		// Early stopping
 		if bestValLoss-valLoss > MinImprovement {
 			bestValLoss = valLoss
-			bestWeights = copyWeights(m.Weights)
-			bestBiases = make([]float32, len(m.Biases))
-			copy(bestBiases, m.Biases)
+			bestWeights, bestBiases = m.Snapshot()
 			patienceCounter = 0
 		} else {
 			patienceCounter++
@@ -179,8 +176,4 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) TrainingReport {
 	}
 }
 
-func copyWeights(src []float32) []float32 {
-	dst := make([]float32, len(src))
-	copy(dst, src)
-	return dst
-}
+

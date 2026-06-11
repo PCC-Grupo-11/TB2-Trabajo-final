@@ -22,8 +22,7 @@ func (m *Model) Predict(record *dataset.Record) (int, float32) {
 		logger.Warn("predicting with untrained model")
 	}
 
-	logits := make([]float32, m.NumClasses)
-	probs := make([]float32, m.NumClasses)
+	logits, probs := allocForward(m.NumClasses)
 	m.ComputeProbs(record, logits, probs)
 
 	return argmax(probs)

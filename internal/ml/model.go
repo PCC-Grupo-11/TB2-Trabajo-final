@@ -35,3 +35,11 @@ func NewModel() *Model {
 func (m *Model) ClassOffset(class int) int {
 	return class * m.FeatureCount
 }
+
+func (m *Model) Snapshot() (weights, biases []float32) {
+	weights = make([]float32, len(m.Weights))
+	copy(weights, m.Weights)
+	biases = make([]float32, len(m.Biases))
+	copy(biases, m.Biases)
+	return
+}

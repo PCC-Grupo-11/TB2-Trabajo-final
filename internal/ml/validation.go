@@ -28,7 +28,7 @@ func computeLoss(model *Model, valSet *dataset.Dataset) float32 {
 		return 0
 	}
 
-	chunkSize := (len(samples) + config.NumWorkers - 1) / config.NumWorkers
+	chunkSize := ceilDiv(len(samples), config.NumWorkers)
 
 	results := make(chan lossResult, config.NumWorkers)
 
@@ -43,8 +43,7 @@ func computeLoss(model *Model, valSet *dataset.Dataset) float32 {
 		wg.Add(1)
 		go func(chunk []dataset.Record) {
 			defer wg.Done()
-			logits := make([]float32, model.NumClasses)
-			probs := make([]float32, model.NumClasses)
+			logits, probs := allocForward(model.NumClasses)
 			var loss float64
 
 			for _, sample := range chunk {
@@ -84,7 +83,7 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 		return
 	}
 
-	chunkSize := (n + config.NumWorkers - 1) / config.NumWorkers
+	chunkSize := ceilDiv(n, config.NumWorkers)
 
 	results := make(chan valResult, config.NumWorkers)
 
@@ -99,8 +98,7 @@ func computeValidation(model *Model, valSet *dataset.Dataset) (loss float32, acc
 		wg.Add(1)
 		go func(chunk []dataset.Record) {
 			defer wg.Done()
-			logits := make([]float32, model.NumClasses)
-			probs := make([]float32, model.NumClasses)
+			logits, probs := allocForward(model.NumClasses)
 			nc := model.NumClasses
 
 			var res valResult

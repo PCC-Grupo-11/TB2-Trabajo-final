@@ -14,6 +14,14 @@ func argmax(probs []float32) (int, float32) {
 	return bestClass, bestProb
 }
 
+func ceilDiv(a, b int) int {
+	return (a + b - 1) / b
+}
+
+func allocForward(n int) ([]float32, []float32) {
+	return make([]float32, n), make([]float32, n)
+}
+
 func Softmax(logits, probs []float32) {
 	if len(logits) == 0 {
 		return
