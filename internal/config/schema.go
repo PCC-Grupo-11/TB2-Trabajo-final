@@ -1,7 +1,8 @@
 package config
 
 const (
-	NumericFeatures = 7
+	NumericFeatures       = 7
+	CategoricalFeatureTypes = 6
 
 	AgencyCount     = 14
 	ComplaintCount  = 110
@@ -9,6 +10,8 @@ const (
 	LocationCount   = 41
 	BoroughCount    = 6
 	ComboCount      = 522
+
+	FeaturesPerRecord = NumericFeatures + CategoricalFeatureTypes
 
 	AgencyOffset     = NumericFeatures
 	ComplaintOffset  = AgencyOffset + AgencyCount

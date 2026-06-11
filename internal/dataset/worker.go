@@ -41,7 +41,7 @@ func parseRow(row []string) Record {
 
 	return Record{
 		Y: uint8(y),
-		Features: [featuresCount]SparseFeature{
+		Features: [config.FeaturesPerRecord]SparseFeature{
 			{0, float32(timeSin)},
 			{1, float32(timeCos)},
 			{2, float32(weekSin)},

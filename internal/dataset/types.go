@@ -2,6 +2,8 @@ package dataset
 
 import (
 	"math/rand"
+
+	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 )
 
 type SparseFeature struct {
@@ -11,7 +13,7 @@ type SparseFeature struct {
 
 type Record struct {
 	Y        uint8
-	Features [featuresCount]SparseFeature
+	Features [config.FeaturesPerRecord]SparseFeature
 }
 
 type Dataset struct {
