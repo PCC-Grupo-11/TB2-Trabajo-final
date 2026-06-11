@@ -3,9 +3,17 @@ package ml
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 )
 
+func ensureDir(path string) error {
+	return os.MkdirAll(filepath.Dir(path), 0755)
+}
+
 func (m *Model) Save(path string) error {
+	if err := ensureDir(path); err != nil {
+		return err
+	}
 	f, err := os.Create(path)
 	if err != nil {
 		return err
@@ -28,6 +36,9 @@ func LoadModel(path string) (*Model, error) {
 }
 
 func SaveReport(report TrainingReport, path string) error {
+	if err := ensureDir(path); err != nil {
+		return err
+	}
 	data, err := json.MarshalIndent(report, "", "  ")
 	if err != nil {
 		return err
