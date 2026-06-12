@@ -1,0 +1,523 @@
+complaint_type,descriptor,location_type
+Derelict Vehicles,Derelict Vehicles,Street
+General Construction/Plumbing,Debris - Excessive,UNKNOWN
+General Construction/Plumbing,Vent/Exhaust - Illegal/Improper,UNKNOWN
+Rodent,Condition Attracting Rodents,1-2 Family Dwelling
+Overgrown Tree/Branches,Hitting Building,Street
+Paint/Plaster,Wall,Residential Building
+Traffic Signal Condition,Veh Signal Visor,UNKNOWN
+Non-Emergency Police Matter,OTHER,Street/Sidewalk
+Illegal Parking,Parking Permit Improper Use,Street/Sidewalk
+Street Sign - Damaged,One Way,Street
+Maintenance Or Facility,Garbage Or Litter,Street/Curbside
+Violation Of Park Rules,Bbq Outside Authorized Area,Park
+Consumer Complaint,Landlord Or Real Estate Agent,Business
+Broken Parking Meter,Out Of Order,Street
+Indoor Air Quality,Sewage Odor,1-2 Family Dwelling
+Food Poisoning,1 Or 2,OTHER
+Drug Activity,Use Indoor,Common Area
+Dead/Dying Tree,Planted Less Than 2 Years Ago,Street
+Dumpster Complaint,Blocking Sidewalk Or Street,Sidewalk
+Residential Disposal Complaint,Waste Left In Front Of Other Residence,Sidewalk
+Street Condition,Cave-In,Street
+Consumer Complaint,Street Fair Vendor,Business
+General Construction/Plumbing,Failure To Maintain,UNKNOWN
+General Construction/Plumbing,Fence - None/Inadequate,UNKNOWN
+Abandoned Bike,Chained To Public Property,Street
+Safety,Carbon Monoxide Detector,Residential Building
+Root/Sewer/Sidewalk Condition,Trees And Sidewalks Program,Street
+Vendor Enforcement,Non-Food Vendor,Street
+Sanitation Worker Or Vehicle Complaint,Inappropriate Behavior,Street
+Unsanitary Condition,Sewage,Residential Building
+Asbestos,Asbestos Complaint (B1),UNKNOWN
+Bus Stop Shelter Complaint,Broken Glass,Bus Stop Shelter
+Noise - Vehicle,Car/Truck Music,Street/Sidewalk
+Rodent,Rat Sighting,3+ Family Mixed Use Building
+Drinking,Underage - Licensed Est,Club/Bar/Restaurant
+Hazardous Materials,Chemical Odor (Hd1),UNKNOWN
+Indoor Air Quality,Chemical Vapors/Gases/Odors,3+ Family Apartment Building
+Food Poisoning,1 Or 2,Restaurant/Bar/Deli/Bakery
+Lead,Lead Kit Request (Residential) (L10),UNKNOWN
+Hazardous Materials,Chemical Spill/Release (Ha1),UNKNOWN
+Noise - House Of Worship,Loud Talking,House Of Worship
+Animal-Abuse,OTHER,Residential Building/House
+Lost Property,Clothing/Glasses,Taxi
+Graffiti,Police Report Not Requested,Street/Sidewalk
+Building/Use,Sro - Illegal Work/No Permit/Change In Occupancy/Use,UNKNOWN
+Door/Window,Window Pane,Residential Building
+Consumer Complaint,Hotel Or Motel,Business
+Traffic Signal Condition,Cable,UNKNOWN
+Overgrown Tree/Branches,Traffic Sign Or Signal Blocked,Street
+Asbestos,UNKNOWN,3+ Family Apartment Building
+Lost Property,Electronics/Phones,Taxi
+Consumer Complaint,Laundromat,Business
+Elevator,Elevator - Multiple Devices On Property,UNKNOWN
+Animal-Abuse,Tortured,Residential Building/House
+Safety,Window Guard Broken/Missing,Residential Building
+Missed Collection,Bulky Trash,Street
+Homeless Person Assistance,Chronic,Store/Commercial
+Indoor Air Quality,Ventilation,3+ Family Apartment Building
+General,Bell/Buzzer/Intercom,Residential Building
+Non-Residential Heat,Inadequate Or No Heat,Building (Non-Residential)
+Traffic Signal Condition,Ped Lamp,UNKNOWN
+General,Signage Missing,Residential Building
+Damaged Tree,Tree Alive - In Poor Condition,Street
+General,Cooking Gas,Residential Building
+Drug Activity,Use Indoor,Lobby
+Sanitation Worker Or Vehicle Complaint,Spilled Garbage,Street
+Panhandling,UNKNOWN,Residential Building/House
+Homeless Person Assistance,Non-Chronic,Store/Commercial
+Street Sign - Damaged,"No Parking, Standing, Stopping",Street
+Dead Animal,Cat,Sidewalk
+Illegal Posting,Flyer Or Handbill,Sidewalk
+Dead Animal,Dog,Sidewalk
+General,Janitor/Super,Residential Building
+Curb Condition,Broken Curb,Sidewalk
+Street Sign - Damaged,UNKNOWN,Street
+Illegal Parking,Overnight Commercial Storage,Street/Sidewalk
+Noise,Noise: Private Carting Noise (Nq1),UNKNOWN
+Lost Property,OTHER,Taxi
+For Hire Vehicle Complaint,Driver Complaint - Passenger,Street
+Food Establishment,Kitchen/Food Prep Area,Restaurant/Bar/Deli/Bakery
+Lost Property,Bag/Wallet,Taxi
+Consumer Complaint,Restaurant,Business
+Animal-Abuse,No Shelter,House And Store
+Paint/Plaster,Ceiling,Residential Building
+Mobile Food Vendor,Food Source/Protection,Mobile Food Vendor
+Boilers,Boiler - Defective/Inoperative/No Permit,UNKNOWN
+Noise - Commercial,Loud Talking,Store/Commercial
+Homeless Person Assistance,Chronic,Subway
+Damaged Tree,Tree Trunk Split,Street
+Non-Emergency Police Matter,Trespassing,Store/Commercial
+Dirty Condition,Trash,Yard
+For Hire Vehicle Complaint,Driver Complaint - Non Passenger,Street
+Traffic Signal Condition,Veh Sgnl Mult Lamps,UNKNOWN
+Water Conservation,Water Meter Broken/Leaking - Private Residence (Cmr),UNKNOWN
+Traffic,Drag Racing,Street/Sidewalk
+Residential Disposal Complaint,Trash Or Recycling Not Secure,Sidewalk
+Sewer,Sewer Backup (Use Comments) (Sa),UNKNOWN
+Dead Animal,Opossum,Street
+Noise - Commercial,Banging/Pounding,Store/Commercial
+Drinking,In Public,Residential Building/House
+Day Care,Day Care Facility,Private School
+Illegal Parking,Unauthorized Bus Layover,Street/Sidewalk
+Consumer Complaint,Tow Truck Company,Business
+Electric,Power Outage,Residential Building
+Illegal Fireworks,UNKNOWN,Park/Playground
+Paint/Plaster,Window/Frame,Residential Building
+Food Establishment,Food Temperature,Restaurant/Bar/Deli/Bakery
+Air Quality,"Air: Odor/Fumes, Restaurant (Ad2)",UNKNOWN
+Water System,Hydrant Leaking (Wc1),UNKNOWN
+Bus Stop Shelter Complaint,Dirty/Graffiti,Bus Stop Shelter
+Animal-Abuse,No Shelter,Residential Building
+Noise,Noise: Construction Before/After Hours (Nm1),UNKNOWN
+Obstruction,Weeds Or Grass,Sidewalk
+School Maintenance,Snow/Ice,School
+Consumer Complaint,Home Improvement Contractor,Business
+Dead Animal,OTHER,Street
+Street Sign - Missing,Stop,Street
+Street Sign - Damaged,St Name - Attached To Pole,Street
+Illegal Parking,Blocked Bike Lane,Street/Sidewalk
+Illegal Parking,Posted Parking Sign Violation,Street/Sidewalk
+Drug Activity,Use Indoor,Hallway
+Residential Disposal Complaint,Trash Or Recycling Not Secure,Street
+Consumer Complaint,Supermarket Or Grocery Store,Business
+Special Projects Inspection Team (Spit),Advertising Sign/Billboard/Posters/Flexible Fabric - Illegal,UNKNOWN
+Dumpster Complaint,Overflowing Dumpster,Sidewalk
+Maintenance Or Facility,Structure - Indoors,Park
+Illegal Parking,Detached Trailer,Street/Sidewalk
+Broken Parking Meter,Coin Or Card Did Not Register,Street
+Dirty Condition,Trash,Alley
+Residential Disposal Complaint,Mattress Or Box Spring Uncovered,Sidewalk
+Graffiti,Graffiti,UNKNOWN
+Sidewalk Condition,Defective Hardware,Sidewalk
+Maintenance Or Facility,Snow Or Ice,Park
+Traffic,Chronic Stoplight Violation,Street/Sidewalk
+Obstruction,Sidewalk Display,Sidewalk
+Street Light Condition,Street Light Out,UNKNOWN
+Illegal Fireworks,UNKNOWN,Residential Building/House
+Illegal Posting,Poster Or Sign,Sidewalk
+Residential Disposal Complaint,Waste Set Out Too Early Or Too Late,Sidewalk
+Plumbing,Bathtub/Shower,Residential Building
+Homeless Person Assistance,Chronic,OTHER
+Animal-Abuse,Neglected,Residential Building/House
+Traffic Signal Condition,Time Switch,UNKNOWN
+Street Sign - Missing,UNKNOWN,Street
+General Construction/Plumbing,Sidewalk Shed/Pipe Scafford - Inadequate Defective/None,UNKNOWN
+Traffic Signal Condition,Underground,UNKNOWN
+Dumpster Complaint,Blocking Sidewalk Or Street,Street
+Drug Activity,Use Indoor,OTHER
+Illegal Parking,Commercial Overnight Parking,Street/Sidewalk
+Day Care,Day Care Facility,OTHER
+Missed Collection,Recycling - Paper,Street
+Water System,Possible Water Main Break (Use Comments) (Wa1),UNKNOWN
+Traffic Signal Condition,Ped Multiple Lamps,UNKNOWN
+Commercial Disposal Complaint,Waste Left In Front Of Residence,Sidewalk
+Blocked Driveway,No Access,Street/Sidewalk
+Indoor Air Quality,OTHER,3+ Family Apartment Building
+Outdoor Dining,Sidewalk Zone Blocked,Sidewalk
+Violation Of Park Rules,Unsafe Use Of Playground,Park
+Dead Animal,Squirrel,Sidewalk
+Panhandling,UNKNOWN,Subway
+General Construction/Plumbing,Curb Cut/Driveway/Carport - Illegal,UNKNOWN
+Damaged Tree,Branch Or Limb Has Fallen Down,Street
+Water Leak,Damp Spot,Residential Building
+Illegal Parking,Double Parked Blocking Vehicle,Street/Sidewalk
+Plumbing,Radiator,Residential Building
+Food Establishment,Bare Hands In Contact W/ Food,Restaurant/Bar/Deli/Bakery
+Street Sign - Missing,"No Parking, Standing, Stopping",Street
+Heat/Hot Water,Apartment Only,Residential Building
+Street Sign - Dangling,Stop,Street
+Dead/Dying Tree,Planted More Than 2 Years Ago,Street
+Noise - Commercial,Loud Talking,Club/Bar/Restaurant
+Noise - Commercial,Car/Truck Music,Store/Commercial
+Water Leak,Slow Leak,Residential Building
+Electrical,Electrical Wiring Defective/Exposed,UNKNOWN
+General Construction/Plumbing,Debris - Falling Or In Danger Of Falling,UNKNOWN
+Food Establishment,Letter Grading,Restaurant/Bar/Deli/Bakery
+Graffiti,Graffiti,Mixed Use
+Noise,"Noise, Barking Dog (Nr5)",UNKNOWN
+Sewer,Culvert Blocked/Needs Cleaning (Se),UNKNOWN
+Dead Animal,Rat Or Mouse,Sidewalk
+Residential Disposal Complaint,Bin Not Used,Street
+Street Sign - Dangling,UNKNOWN,Street
+Flooring/Stairs,Floor,Residential Building
+Non-Emergency Police Matter,Trespassing,Street/Sidewalk
+Encampment,UNKNOWN,Residential Building/House
+Illegal Posting,Poster Or Sign,Street
+Plumbing,Gas Hook-Up/Piping - Illegal Or Defective,UNKNOWN
+Street Condition,Blocked - Construction,Street
+Traffic,Chronic Speeding,Street/Sidewalk
+Homeless Person Assistance,Non-Chronic,House Of Worship
+Drug Activity,Use Outside,Street/Sidewalk
+Homeless Person Assistance,Non-Chronic,Subway
+Encampment,UNKNOWN,Park/Playground
+Street Light Condition,Lamppost Damaged,UNKNOWN
+Drinking,After Hours - Licensed Est,Club/Bar/Restaurant
+Air Quality,Air: Other Air Problem (Use Comments) (Azz),UNKNOWN
+Drug Activity,Use Indoor,Stairwell
+Sidewalk Condition,Sidewalk Collapsed,Sidewalk
+Curb Condition,Defacement,Curb
+Street Condition,Failed Street Repair,Street
+Special Projects Inspection Team (Spit),Illegal Hotel Rooms In Residential Building,UNKNOWN
+Food Establishment,Rodents/Insects/Garbage,Restaurant/Bar/Deli/Bakery
+Sidewalk Condition,Pedestrian Ramp Defective,Sidewalk
+Damaged Tree,Tree Leaning/Uprooted,Street
+Illegal Parking,Blocked Hydrant,Street/Sidewalk
+Obstruction,Merchandise,Street
+Consumer Complaint,Stoop Line Stand,Business
+Obstruction,Cone,Street
+Bike Rack,Abandoned Bike,Sidewalk
+Unsanitary Animal Pvt Property,Dog,3+ Family Apartment Building
+Sewer,Catch Basin Sunken/Damaged/Raised (Sc1),UNKNOWN
+Noise,Noise:  Lawn Care Equipment (Ncl),UNKNOWN
+Building/Use,Illegal Conversion Of Residential Building/Space,UNKNOWN
+Special Projects Inspection Team (Spit),Sign/Awning/Marquee - Illegal/No Permit,UNKNOWN
+Traffic Signal Condition,Base Door,UNKNOWN
+Traffic,Congestion/Gridlock,Street/Sidewalk
+Noise - Park,Loud Music/Party,Park/Playground
+Dead Animal,Cat,Street
+Food Establishment,Pet/Animal,Restaurant/Bar/Deli/Bakery
+Noise,Noise: Air Condition/Ventilation Equipment (Nv1),UNKNOWN
+Noise - Commercial,Loud Music/Party,Club/Bar/Restaurant
+Overgrown Tree/Branches,Hitting Power Lines,Street
+Sewer,Catch Basin Search (Sc2),UNKNOWN
+Mobile Food Vendor,Food Temperature,Mobile Food Vendor
+Elevator,Elevator - Single Device On Property/No Alternate Service,UNKNOWN
+Animal In A Park,Dead Animal,Park
+Missed Collection,Trash And Bulky Trash,Street
+Taxi Complaint,Driver Complaint - Passenger,Street
+Overgrown Tree/Branches,Hitting Phone/Cable Lines,Street
+Illegal Fireworks,UNKNOWN,Street/Sidewalk
+Street Light Condition,Lamppost Knocked Down,UNKNOWN
+Safety,Sprinkler,Residential Building
+Bus Stop Shelter Complaint,Snow Removal Requested,Bus Stop Shelter
+Mobile Food Vendor,Equipment,Mobile Food Vendor
+Animal-Abuse,OTHER,Street/Sidewalk
+Unsanitary Condition,Pests,Residential Building
+Blocked Driveway,Partial Access,Street/Sidewalk
+Emergency Response Team (Ert),After Hours Work - Illegal,UNKNOWN
+Food Establishment,No Permit Or License,Restaurant/Bar/Deli/Bakery
+Sidewalk Condition,Blocked - Construction,Sidewalk
+Noise - Residential,Loud Music/Party,Residential Building/House
+Dirty Condition,Trash,Sidewalk
+Homeless Person Assistance,Non-Chronic,Street/Sidewalk
+Homeless Person Assistance,Non-Chronic,Park/Playground
+Cannabis Retailer,Sales To Minors Under 21,UNKNOWN
+Street Sweeping Complaint,Inadequate Sweeping,Street
+Wood Pile Remaining,Remove Debris,Street
+Illegal Parking,Double Parked Blocking Traffic,Street/Sidewalk
+Curb Condition,Curb Defect-Metal Protruding,Sidewalk
+Real Time Enforcement,Work Without A Permit - Occupied Multiple Dwelling,UNKNOWN
+Building/Use,No Certificate Of Occupancy/Illegal/Contrary To Co,UNKNOWN
+Urinating In Public,UNKNOWN,Street/Sidewalk
+Litter Basket Request,New Basket,Sidewalk
+General,Cabinet,Residential Building
+Water System,Hydrant Knocked Over/Missing (Wc),UNKNOWN
+Illegal Parking,License Plate Obscured,Street/Sidewalk
+Safety,Fire Escape,Residential Building
+Illegal Dumping,Removal Request,Street
+Non-Emergency Police Matter,OTHER,Residential Building/House
+Rodent,Signs Of Rodents,3+ Family Apt. Building
+Dead Animal,Raccoon,Sidewalk
+Maintenance Or Facility,Structure - Outdoors,Park
+Cannabis Retailer,Unlicensed,UNKNOWN
+Homeless Person Assistance,Non-Chronic,Residential Building/House
+Water System,Hydrant Running Full (Wa4),UNKNOWN
+Traffic Signal Condition,Veh Signal Head,UNKNOWN
+Food Establishment,Food Spoiled,Restaurant/Bar/Deli/Bakery
+Water System,Hydrant Defective (Wc2),UNKNOWN
+Traffic Signal Condition,Veh Signal Lens,UNKNOWN
+Street Condition,Dumpster - Construction Waste,Street
+Maintenance Or Facility,Rodent Sighting,Street/Curbside
+Traffic Signal Condition,Veh Signal Lamp,UNKNOWN
+Missed Collection,Recycling - Metal/Glass/Rigid Plastic,Street
+General Construction/Plumbing,"Building - Vacant, Open And Unguarded",UNKNOWN
+Indoor Air Quality,Sewage Odor,3+ Family Apt. Building
+Maintenance Or Facility,Graffiti Or Vandalism,Park
+Missed Collection,Recycling - Paper/Metal/Glass/Rigid Plastic,Street
+Dead Animal,Rat Or Mouse,Street
+Illegal Tree Damage,Roots Damaged,Street
+General Construction/Plumbing,Adjacent Buildings Not Protected,UNKNOWN
+Emergency Response Team (Ert),Lights From Parking Lot Shining On Building,UNKNOWN
+Street Sign - Dangling,"No Parking, Standing, Stopping",Street
+Consumer Complaint,Garage Or Parking Lot,Business
+Mobile Food Vendor,Food Worker Activity,Mobile Food Vendor
+General,Ventilation System,Residential Building
+Dumpster Complaint,Overflowing Dumpster,Street
+Street Condition,"Rough, Pitted Or Cracked Roads",Street
+Illegal Tree Damage,Trunk Damaged,Street
+Dirty Condition,Trash,Gutter
+Obstruction,Trash Or Recycling,Sidewalk
+Sewer,Manhole Cover Missing (Emergency) (Sa3),UNKNOWN
+Consumer Complaint,Storage Warehouse,Business
+Investigations And Discipline (Iad),Investigative Inspection,UNKNOWN
+Traffic,Truck Route Violation,Street/Sidewalk
+Maintenance Or Facility,Unsecured Facility,Park
+Consumer Complaint,"Clothing, Shoe, Or Accessories Store",Business
+Traffic Signal Condition,Controller,UNKNOWN
+Illegal Tree Damage,Branches Damaged,Street
+Consumer Complaint,"Barber Shop, Beauty Salon, Or Nail Salon",Business
+Abandoned Vehicle,With License Plate,Street/Sidewalk
+Dirty Condition,Broken Glass,Street
+Commercial Disposal Complaint,Waste Disposal,Sidewalk
+Sidewalk Condition,Dumpster - Construction Waste,Sidewalk
+Noise,"Noise, Ice Cream Truck (Nr4)",UNKNOWN
+Outside Building,Roofing,Residential Building
+Indoor Air Quality,Dust From Construction,3+ Family Apartment Building
+Dirty Condition,Debris From Car Accident,Street
+Noise - Residential,Loud Television,Residential Building/House
+Paint/Plaster,Radiator,Residential Building
+Snow Or Ice,Roadway,Street
+Traffic Signal Condition,Led Pedestrian Unit,UNKNOWN
+Traffic Signal Condition,Wireless,UNKNOWN
+Street Sweeping Complaint,Street Not Swept,Street
+Homeless Person Assistance,Non-Chronic,OTHER
+Appliance,Electric/Gas Range,Residential Building
+Air Quality,"Air: Odor/Fumes, Vehicle Idling (Ad3)",UNKNOWN
+School Maintenance,Heating Problem,School
+General Construction/Plumbing,Building Shaking/Vibrating/Structural Stability,UNKNOWN
+Water System,Low Water Pressure - Wlwp,UNKNOWN
+Street Light Condition,Street Light Lamp Missing,UNKNOWN
+Food Establishment,Food Contains Foreign Object,Restaurant/Bar/Deli/Bakery
+Traffic Signal Condition,Pedestrian Signal,UNKNOWN
+General Construction/Plumbing,Site Conditions Endangering Workers,UNKNOWN
+Snow Or Ice,Sidewalk,Sidewalk
+Electric,No Lighting,Residential Building
+Noise - Vehicle,Engine Idling,Street/Sidewalk
+Traffic Signal Condition,Post,UNKNOWN
+Residential Disposal Complaint,Waste Not Separated,Sidewalk
+Traffic Signal Condition,Vehicle Signal,UNKNOWN
+Street Sign - Damaged,Street Cleaning - Asp,Street
+Smoking Or Vaping,Allowed In Smoke Free Area,Restaurant/Bar/Deli/Bakery
+Plumbing,Toilet,Residential Building
+Encampment,UNKNOWN,Street/Sidewalk
+Obstruction,Cone,Sidewalk
+Dead Animal,Bird,Street
+Graffiti,Police Report Not Requested,Store/Commercial
+Outdoor Dining,Restaurant Status,Sidewalk
+Air Quality,"Air: Smoke, Vehicular (Aa4)",UNKNOWN
+Illegal Parking,Blocked Sidewalk,Street/Sidewalk
+Electric,Outlet/Switch,Residential Building
+Noise - Commercial,Car/Truck Horn,Store/Commercial
+Obstruction,Sign,Sidewalk
+Broken Parking Meter,No Receipt,Street
+Smoking Or Vaping,Allowed In Smoke Free Area,Residential Building
+Animal-Abuse,Chained,Residential Building/House
+Street Sign - Damaged,Bus Stop,Street
+Vendor Enforcement,Food Vendor,Street
+Drinking,In Public,Store/Commercial
+Sanitation Worker Or Vehicle Complaint,Noise,Street
+Street Sign - Missing,St Name - Attached To Pole,Street
+Noise - Street/Sidewalk,Loud Music/Party,Street/Sidewalk
+Sewer,Sewer Odor (Sa2),UNKNOWN
+Street Sign - Dangling,Street Cleaning - Asp,Street
+Obstruction,Trash Or Recycling,Street
+Illegal Posting,Sticker Or Decal,Sidewalk
+Bike/Roller/Skate,UNKNOWN,Street/Sidewalk
+Urinating In Public,UNKNOWN,Residential Building/House
+Residential Disposal Complaint,Waste Left In Front Of Other Residence,Street
+Street Sign - Damaged,Stop,Street
+Overgrown Tree/Branches,Blocking Street,Street
+Water System,Dirty Water (We),UNKNOWN
+Noise,"Noise, Other Animals (Nr6)",UNKNOWN
+Illegal Tree Damage,Bicycle Chained To Tree,Street
+Rodent,Rat Sighting,1-2 Family Dwelling
+Non-Emergency Police Matter,Trespassing,Residential Building/House
+Panhandling,UNKNOWN,Street/Sidewalk
+Street Light Condition,Fixture/Luminaire Hanging,UNKNOWN
+Bike/Roller/Skate Chronic,UNKNOWN,Street/Sidewalk
+Consumer Complaint,Drug Store Or Pharmacy,Business
+Drinking,In Public,Street/Sidewalk
+Consumer Complaint,Tobacco Sales,Business
+Bus Stop Shelter Placement,New Bus Stop Shelter Placement,Bus Stop Shelter
+Street Light Condition,Street Light Dayburning,UNKNOWN
+Sidewalk Condition,Sidewalk Violation,Sidewalk
+Flooring/Stairs,Stairs,Residential Building
+Illegal Parking,Blocked Crosswalk,Street/Sidewalk
+General,Mailbox,Residential Building
+Maintenance Or Facility,Snow Or Ice,Street/Curbside
+Unleashed Dog,Unleashed Dog In Public,Public/Unfenced Area
+Noise - Commercial,Loud Music/Party,Store/Commercial
+Food Establishment,Food Worker Hygiene,Restaurant/Bar/Deli/Bakery
+Food Establishment,Food Contaminated,Restaurant/Bar/Deli/Bakery
+Plumbing,Basin/Sink,Residential Building
+Illegal Dumping,Removal Request,Sidewalk
+Unsanitary Condition,Garbage/Recycling Storage,Residential Building
+Consumer Complaint,"Bodega, Deli, Or Convenience Store",Business
+Illegal Dumping,Chronic Dumping,Street
+Traffic Signal Condition,Bike Signal,UNKNOWN
+Maintenance Or Facility,Grass/Weeds,Park
+Dirty Condition,Dog Waste,Sidewalk
+Encampment,UNKNOWN,Subway
+Appliance,Refrigerator,Residential Building
+Maintenance Or Facility,Hours Of Operation,Park
+Water System,Hydrant Running (Wc3),UNKNOWN
+Rodent,Rat Sighting,Sidewalk
+Water Conservation,Water Meter Broken/Leaking - Other (Cmo),UNKNOWN
+Dirty Condition,Dirt Or Gravel,Street
+Noise - Residential,Loud Talking,Residential Building/House
+Building/Use,Illegal. Commercial Use In Resident Zone,UNKNOWN
+Unsanitary Condition,Mold,Residential Building
+General Construction/Plumbing,Cons - Contrary/Beyond Approved Plans/Permits,UNKNOWN
+Taxi Complaint,Driver Complaint - Non Passenger,Street
+Indoor Sewage,Sewage Leak,3+ Family Apt. Building
+Maintenance Or Facility,Garbage Or Litter,Park
+Heat/Hot Water,Entire Building,Residential Building
+Mold,Public Complaint - Comm Location,Commercial Building
+Door/Window,Door Frame,Residential Building
+Noise,"Noise: Boat(Engine,Music,Etc) (Nr10)",UNKNOWN
+Water Leak,Heavy Flow,Residential Building
+Noise - Residential,Banging/Pounding,Residential Building/House
+Smoking Or Vaping,Allowed In Smoke Free Area,Commercial Building
+Water System,Hyd Valve Box Cover Missing (Wv2),UNKNOWN
+Street Light Condition,Lamppost Base Door/Cover Open,UNKNOWN
+Violation Of Park Rules,Smoking,Park
+Graffiti,Graffiti,Comercial
+Noise - Commercial,Banging/Pounding,Club/Bar/Restaurant
+Residential Disposal Complaint,Storage Area Not Provided,Sidewalk
+Sewer,Street Flooding (Sj),UNKNOWN
+Residential Disposal Complaint,Waste Not Separated,Street
+Maintenance Or Facility,Structure - Outdoors,Street/Curbside
+Street Light Condition,Street Light Cycling,UNKNOWN
+Noise,Noise: Manufacturing Noise (Nk1),UNKNOWN
+Outside Building,Pavement,Residential Building
+Encampment,UNKNOWN,Store/Commercial
+Door/Window,Window Frame,Residential Building
+Homeless Person Assistance,Chronic,Street/Sidewalk
+Overgrown Tree/Branches,Dead Branches In Tree,Street
+Elevator,Maintenance,Residential Building
+Animal-Abuse,Neglected,Store/Commercial
+Plumbing,Plumbing-Defective/Leaking/Not Maintained,UNKNOWN
+Illegal Parking,Paper License Plates,Street/Sidewalk
+Obstruction,Merchandise,Sidewalk
+General Construction/Plumbing,Egress - Doors Locked/Blocked/Improper/No Secondary Means,UNKNOWN
+Homeless Person Assistance,Chronic,Park/Playground
+Street Light Condition,Lamppost Wire Exposed,UNKNOWN
+Litter Basket Request,Replacement Basket,Street
+Snow Or Ice,Pedestrian Feature,Street
+Sewer,Manhole Overflow (Use Comments) (Sa1),UNKNOWN
+Animal In A Park,Injured Wildlife,Park
+Rodent,Rat Sighting,3+ Family Apt. Building
+Street Light Condition,Traffic Signal Light,UNKNOWN
+Door/Window,Door,Residential Building
+Plumbing,Water Supply,Residential Building
+Sidewalk Condition,Broken Sidewalk,Sidewalk
+Violation Of Park Rules,Unlicensed Vendors,Park
+Best/Site Safety,Demolition - Unsafe,UNKNOWN
+General Construction/Plumbing,Wall/Retaining Wall - Bulging/Cracked,UNKNOWN
+Street Condition,Defective Hardware,Street
+Illegal Dumping,Chronic Dumping,Sidewalk
+Non-Emergency Police Matter,OTHER,Store/Commercial
+Sewer,Rain Garden Debris (Girgd),UNKNOWN
+Noise - Street/Sidewalk,Loud Talking,Street/Sidewalk
+Panhandling,UNKNOWN,Store/Commercial
+Homeless Person Assistance,Chronic,Residential Building/House
+Litter Basket Request,New Basket,Street
+Residential Disposal Complaint,Waste Set Out Too Early Or Too Late,Street
+Panhandling,UNKNOWN,Park/Playground
+For Hire Vehicle Complaint,Driver Complaint - Non Passenger,UNKNOWN
+Noise - Park,Loud Talking,Park/Playground
+Missed Collection,Compost,Street
+Noise,Noise: Alarms (Nr3),UNKNOWN
+Water Conservation,Illegal Use Of A Hydrant (Cin),UNKNOWN
+General Construction/Plumbing,Posted Notice Or Order Removed/Tampered With,UNKNOWN
+Noise,Noise: Construction Equipment (Nc1),UNKNOWN
+Street Condition,Plate Condition - Noisy,Street
+Non-Emergency Police Matter,OTHER,Park/Playground
+Dirty Condition,Trash,Street
+Consumer Complaint,Used Car Dealer,Business
+Residential Disposal Complaint,Bin Not Used,Sidewalk
+Dead Animal,Raccoon,Street
+Plumbing,Steam Pipe/Riser,Residential Building
+Damaged Tree,Entire Tree Has Fallen Down,Street
+Sewer,Catch Basin Clogged/Flooding (Use Comments) (Sc),UNKNOWN
+Illegal Tree Damage,Unauthorized Tree Pruning,Street
+Dead Animal,Bird,Sidewalk
+Plumbing,Failure To Retain Water/Improper Drainage- (Ll103/89),UNKNOWN
+Air Quality,"Air: Smoke, Chimney Or Vent (As1)",UNKNOWN
+Water System,No Water (Wnw),UNKNOWN
+Violation Of Park Rules,Obstructing Public Use,Park
+Illegal Tree Damage,Unauthorized Tree Removal,Street
+Consumer Complaint,Car Wash,Business
+Noise - Vehicle,Car/Truck Horn,Street/Sidewalk
+Consumer Complaint,Other Store (Non-Food),Business
+Day Care,Day Care Facility,Commercial Building
+Damaged Tree,Branch Cracked And Will Fall,Street
+Litter Basket Complaint,Overflowing,Sidewalk
+Paint/Plaster,Door/Frame,Residential Building
+Day Care,Day Care Facility,Apartment
+New Tree Request,For One Address,Street
+Air Quality,"Air: Dust, Construction/Demolition (Ae4)",UNKNOWN
+Maintenance Or Facility,Rodent Sighting,Park
+Street Light Condition,Multiple Street Lights Out,UNKNOWN
+Noise - House Of Worship,Loud Music/Party,House Of Worship
+Plumbing,Plumbing Work - Illegal/No Permit/Standpipe/Sprinkler,UNKNOWN
+Electric,Lighting,Residential Building
+Dead Animal,Squirrel,Street
+Missed Collection,Bulky Recycling,Street
+Safety,Smoke Detector,Residential Building
+Rodent,Condition Attracting Rodents,3+ Family Apt. Building
+Street Light Condition,Street Light Lamp Dim,UNKNOWN
+General Construction/Plumbing,Working Contrary To Stop Work Order,UNKNOWN
+Graffiti,Graffiti,Residential
+Paint/Plaster,Cabinet,Residential Building
+Street Sign - Dangling,St Name - Attached To Pole,Street
+Street Condition,Pothole,UNKNOWN
+Noise,Noise: Jack Hammering (Nc2),UNKNOWN
+Building/Use,Zoning - Non-Conforming/Illegal Vehicle Storage,UNKNOWN
+Food Poisoning,3 Or More,Restaurant/Bar/Deli/Bakery
+Electric,Wiring,Residential Building
+Cannabis Retailer,Suspicious Activity,UNKNOWN
+Dirty Condition,Broken Glass,Sidewalk
+Outdoor Dining,Site Setup Condition,Sidewalk
+Snow Or Ice,Snow Tracking,Street
+Animal In A Park,Dog Off Leash,Park
+Water System,Excessive Water In Basement (Wefb),UNKNOWN
+Missed Collection,Trash,Street
+Water System,Leak (Use Comments) (Wa2),UNKNOWN
+General Construction/Plumbing,Building Permit - None,UNKNOWN
+Street Condition,Plate Condition - Shifted,Street
+Dirty Condition,Syringes,Sidewalk
+Sanitation Worker Or Vehicle Complaint,Unsafe Driving,Street
+Traffic Signal Condition,Aps,UNKNOWN
