@@ -4,7 +4,6 @@ import (
 	"context"
 	"net"
 	"os"
-	"time"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/inference"
@@ -24,10 +23,7 @@ func main() {
 		"mongo_uri", cfg.MongoURI,
 	)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	model, err := storage.LoadLatestModelFromURI(ctx, cfg.MongoURI)
+	model, err := storage.LoadLatestModelFromURI(context.Background(), cfg.MongoURI)
 	if err != nil {
 		logger.Error("failed to load model", "error", err)
 		os.Exit(1)

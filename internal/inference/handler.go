@@ -13,8 +13,6 @@ import (
 func HandleConnection(conn net.Conn, model *ml.Model) {
 	defer conn.Close()
 
-	conn.SetDeadline(time.Now().Add(30 * time.Second))
-
 	var req protocol.InferenceRequest
 	if err := protocol.ReadMessage(conn, &req); err != nil {
 		logger.Error("failed to read request", "error", err)

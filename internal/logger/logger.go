@@ -20,4 +20,3 @@ func Error(msg string, args ...any) {
 func Warn(msg string, args ...any) {
 	log.Warn(msg, args...)
 }
-

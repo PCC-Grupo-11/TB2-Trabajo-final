@@ -53,11 +53,8 @@ func main() {
 		"duration_seconds", report.TrainingTimeSeconds,
 	)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	logger.Info("saving model to MongoDB")
-	if err := storage.SaveModelWithURI(ctx, cfg.MongoURI, model, report); err != nil {
+	if err := storage.SaveModelWithURI(context.Background(), cfg.MongoURI, model, report); err != nil {
 		logger.Error("failed to save model", "error", err)
 		os.Exit(1)
 	}
