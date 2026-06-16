@@ -31,7 +31,7 @@ func HandleConnection(conn net.Conn, model *ml.Model) {
 
 	for i := range req.Records {
 		rec := dataset.Record{Features: req.Records[i].Features}
-		class, confidence, probs := model.PredictWithProbs(&rec)
+		class, confidence, probs := model.Predict(&rec)
 
 		results[i] = protocol.PredictionResult{
 			Class:         class,

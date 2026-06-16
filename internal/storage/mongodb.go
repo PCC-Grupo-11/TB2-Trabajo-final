@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-func Connect(ctx context.Context, uri string) (*mongo.Client, error) {
+func connect(ctx context.Context, uri string) (*mongo.Client, error) {
 	client, err := mongo.Connect(options.Client().ApplyURI(uri))
 	if err != nil {
 		return nil, err
@@ -21,7 +21,7 @@ func Connect(ctx context.Context, uri string) (*mongo.Client, error) {
 	return client, nil
 }
 
-func LoadLatestModel(ctx context.Context, client *mongo.Client) (*ml.Model, error) {
+func loadLatestModel(ctx context.Context, client *mongo.Client) (*ml.Model, error) {
 	coll := client.Database(DatabaseName).Collection(ModelsCollection)
 	opts := options.FindOne().SetSort(bson.D{{Key: "created_at", Value: -1}})
 
@@ -40,7 +40,7 @@ func LoadLatestModel(ctx context.Context, client *mongo.Client) (*ml.Model, erro
 	}, nil
 }
 
-func SaveModel(ctx context.Context, client *mongo.Client, model *ml.Model, report ml.TrainingReport) error {
+func saveModel(ctx context.Context, client *mongo.Client, model *ml.Model, report ml.TrainingReport) error {
 	coll := client.Database(DatabaseName).Collection(ModelsCollection)
 
 	doc := ModelDocument{
@@ -69,21 +69,21 @@ func SaveModel(ctx context.Context, client *mongo.Client, model *ml.Model, repor
 }
 
 func LoadLatestModelFromURI(ctx context.Context, uri string) (*ml.Model, error) {
-	client, err := Connect(ctx, uri)
+	client, err := connect(ctx, uri)
 	if err != nil {
 		return nil, err
 	}
 	defer client.Disconnect(ctx)
 
-	return LoadLatestModel(ctx, client)
+	return loadLatestModel(ctx, client)
 }
 
 func SaveModelWithURI(ctx context.Context, uri string, model *ml.Model, report ml.TrainingReport) error {
-	client, err := Connect(ctx, uri)
+	client, err := connect(ctx, uri)
 	if err != nil {
 		return err
 	}
 	defer client.Disconnect(ctx)
 
-	return SaveModel(ctx, client, model, report)
+	return saveModel(ctx, client, model, report)
 }

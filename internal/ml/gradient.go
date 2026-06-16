@@ -7,7 +7,7 @@ import (
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/dataset"
 )
 
-type Gradient struct {
+type gradient struct {
 	WeightGrad []float32
 	BiasGrad   []float32
 }
@@ -15,24 +15,24 @@ type Gradient struct {
 var gradientPool = sync.Pool{
 	New: func() any {
 		totalWeights := config.TotalFeatures * config.NumClasses
-		return &Gradient{
+		return &gradient{
 			WeightGrad: make([]float32, totalWeights),
 			BiasGrad:   make([]float32, config.NumClasses),
 		}
 	},
 }
 
-func getGradient() *Gradient {
-	return gradientPool.Get().(*Gradient)
+func getGradient() *gradient {
+	return gradientPool.Get().(*gradient)
 }
 
-func putGradient(g *Gradient) {
+func putGradient(g *gradient) {
 	clear(g.WeightGrad)
 	clear(g.BiasGrad)
 	gradientPool.Put(g)
 }
 
-func computeGradientInto(batch []dataset.Record, model *Model, grad *Gradient, logits, probs []float32) {
+func computeGradientInto(batch []dataset.Record, model *Model, grad *gradient, logits, probs []float32) {
 	for _, sample := range batch {
 		model.ComputeProbs(&sample, logits, probs)
 

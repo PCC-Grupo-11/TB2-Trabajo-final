@@ -21,6 +21,3 @@ func Warn(msg string, args ...any) {
 	log.Warn(msg, args...)
 }
 
-func Debug(msg string, args ...any) {
-	log.Debug(msg, args...)
-}

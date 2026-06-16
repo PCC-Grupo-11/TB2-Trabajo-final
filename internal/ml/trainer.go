@@ -56,7 +56,7 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) TrainingReport {
 		trainSet.Shuffle(config.GlobalSeed + int64(epoch))
 
 		batchCh := make(chan []dataset.Record, 5*config.NumWorkers)
-		gradCh := make(chan *Gradient, 5*config.NumWorkers)
+		gradCh := make(chan *gradient, 5*config.NumWorkers)
 
 		// Batch producer
 		go func() {
@@ -89,7 +89,7 @@ func (m *Model) Train(trainSet, valSet *dataset.Dataset) TrainingReport {
 			close(gradCh)
 		}()
 
-		totalGrad := &Gradient{
+		totalGrad := &gradient{
 			WeightGrad: make([]float32, totalWeights),
 			BiasGrad:   make([]float32, m.NumClasses),
 		}
