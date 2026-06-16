@@ -5,14 +5,9 @@ import (
 	"os"
 )
 
-var log *slog.Logger
-
-func Init(level slog.Level) {
-	log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: level,
-	}))
-	slog.SetDefault(log)
-}
+var log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+	Level: slog.LevelInfo,
+}))
 
 func Info(msg string, args ...any) {
 	log.Info(msg, args...)
