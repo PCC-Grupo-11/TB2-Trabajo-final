@@ -1,8 +1,8 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log/slog"
 	"os"
 	"time"
 
@@ -10,11 +10,15 @@ import (
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/dataset"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/logger"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/ml"
+	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/storage"
 )
 
 func main() {
-	cfg := config.Load()
-	logger.Init(slog.LevelInfo)
+	cfg, err := config.Load()
+	if err != nil {
+		logger.Error("invalid config", "error", err)
+		os.Exit(1)
+	}
 
 	logger.Info("trainer starting", "data_path", cfg.DataPath)
 
@@ -49,17 +53,15 @@ func main() {
 		"duration_seconds", report.TrainingTimeSeconds,
 	)
 
-	logger.Info("saving model", "path", cfg.ModelOutputPath)
-	if err := model.Save(cfg.ModelOutputPath); err != nil {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	logger.Info("saving model to MongoDB")
+	if err := storage.SaveModelWithURI(ctx, cfg.MongoURI, model, report); err != nil {
 		logger.Error("failed to save model", "error", err)
 		os.Exit(1)
 	}
-
-	logger.Info("saving metadata", "path", cfg.MetadataPath)
-	if err := ml.SaveReport(report, cfg.MetadataPath); err != nil {
-		logger.Error("failed to save metadata", "error", err)
-		os.Exit(1)
-	}
+	logger.Info("model saved successfully to MongoDB")
 
 	fmt.Printf("\nTraining Report:\n")
 	fmt.Printf("\tValidation Loss:    %.4f\n", report.FinalValidationLoss)

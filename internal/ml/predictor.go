@@ -27,3 +27,15 @@ func (m *Model) Predict(record *dataset.Record) (int, float32) {
 
 	return argmax(probs)
 }
+
+func (m *Model) PredictWithProbs(record *dataset.Record) (int, float32, []float32) {
+	if !m.Trained {
+		logger.Warn("predicting with untrained model")
+	}
+
+	logits, probs := allocForward(m.NumClasses)
+	m.ComputeProbs(record, logits, probs)
+
+	class, confidence := argmax(probs)
+	return class, confidence, probs
+}
