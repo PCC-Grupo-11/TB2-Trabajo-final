@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"time"
@@ -54,7 +53,7 @@ func main() {
 	)
 
 	logger.Info("saving model to MongoDB")
-	if err := storage.SaveModelWithURI(context.Background(), cfg.MongoURI, model, report); err != nil {
+	if err := storage.SaveModelWithURI(cfg.MongoURI, model, report); err != nil {
 		logger.Error("failed to save model", "error", err)
 		os.Exit(1)
 	}

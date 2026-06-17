@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/ml"
@@ -10,25 +11,34 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-func connect(ctx context.Context, uri string) (*mongo.Client, error) {
-	client, err := mongo.Connect(options.Client().ApplyURI(uri))
+func Connect(ctx context.Context, uri string) (*mongo.Client, error) {
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
+
+	client, err := mongo.Connect(opts)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
 	}
+
 	if err := client.Ping(ctx, nil); err != nil {
-		return nil, err
+		_ = client.Disconnect(context.Background())
+		return nil, fmt.Errorf("failed to ping MongoDB: %w", err)
 	}
+
 	return client, nil
 }
 
-func loadLatestModel(ctx context.Context, client *mongo.Client) (*ml.Model, error) {
+func LoadLatestModel(ctx context.Context, client *mongo.Client) (*ml.Model, error) {
 	coll := client.Database(DatabaseName).Collection(ModelsCollection)
 	opts := options.FindOne().SetSort(bson.D{{Key: "created_at", Value: -1}})
 
 	var doc ModelDocument
 
 	if err := coll.FindOne(ctx, bson.D{}, opts).Decode(&doc); err != nil {
-		return nil, err
+		if err == mongo.ErrNoDocuments {
+			return nil, fmt.Errorf("no trained model found in database %q collection %q", DatabaseName, ModelsCollection)
+		}
+		return nil, fmt.Errorf("failed to load model: %w", err)
 	}
 
 	return &ml.Model{
@@ -40,7 +50,7 @@ func loadLatestModel(ctx context.Context, client *mongo.Client) (*ml.Model, erro
 	}, nil
 }
 
-func saveModel(ctx context.Context, client *mongo.Client, model *ml.Model, report ml.TrainingReport) error {
+func SaveModel(ctx context.Context, client *mongo.Client, model *ml.Model, report ml.TrainingReport) error {
 	coll := client.Database(DatabaseName).Collection(ModelsCollection)
 
 	doc := ModelDocument{
@@ -65,25 +75,34 @@ func saveModel(ctx context.Context, client *mongo.Client, model *ml.Model, repor
 	}
 
 	_, err := coll.InsertOne(ctx, doc)
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to save model: %w", err)
+	}
+	return nil
 }
 
-func LoadLatestModelFromURI(ctx context.Context, uri string) (*ml.Model, error) {
-	client, err := connect(ctx, uri)
+func LoadLatestModelFromURI(uri string) (*ml.Model, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	client, err := Connect(ctx, uri)
 	if err != nil {
 		return nil, err
 	}
-	defer client.Disconnect(ctx)
+	defer client.Disconnect(context.Background())
 
-	return loadLatestModel(ctx, client)
+	return LoadLatestModel(ctx, client)
 }
 
-func SaveModelWithURI(ctx context.Context, uri string, model *ml.Model, report ml.TrainingReport) error {
-	client, err := connect(ctx, uri)
+func SaveModelWithURI(uri string, model *ml.Model, report ml.TrainingReport) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	client, err := Connect(ctx, uri)
 	if err != nil {
 		return err
 	}
-	defer client.Disconnect(ctx)
+	defer client.Disconnect(context.Background())
 
-	return saveModel(ctx, client, model, report)
+	return SaveModel(ctx, client, model, report)
 }
