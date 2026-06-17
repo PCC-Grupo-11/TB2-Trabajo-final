@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"net"
 	"os"
 
@@ -23,7 +22,7 @@ func main() {
 		"mongo_uri", cfg.MongoURI,
 	)
 
-	model, err := storage.LoadLatestModelFromURI(context.Background(), cfg.MongoURI)
+	model, err := storage.LoadLatestModelFromURI(cfg.MongoURI)
 	if err != nil {
 		logger.Error("failed to load model", "error", err)
 		os.Exit(1)
