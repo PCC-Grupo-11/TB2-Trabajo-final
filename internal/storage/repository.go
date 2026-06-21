@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/protocol"
@@ -40,7 +41,7 @@ func (r *Repository) CreateUser(ctx context.Context, username, hashedPassword st
 		HashedPassword: hashedPassword,
 		CreatedAt:      time.Now(),
 	})
-	return err
+	return fmt.Errorf("create user %q: %w", username, err)
 }
 
 func (r *Repository) FindUser(ctx context.Context, username string) (*User, error) {
@@ -48,7 +49,7 @@ func (r *Repository) FindUser(ctx context.Context, username string) (*User, erro
 	var user User
 	err := coll.FindOne(ctx, bson.M{"username": username}).Decode(&user)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("find user %q: %w", username, err)
 	}
 	return &user, nil
 }
