@@ -7,11 +7,11 @@ import (
 )
 
 type Model struct {
-	FeatureCount int       `json:"feature_count"`
-	NumClasses   int       `json:"num_classes"`
-	Weights      []float32 `json:"weights"`
-	Biases       []float32 `json:"biases"`
-	Trained      bool      `json:"trained"`
+	FeatureCount int       `json:"feature_count" bson:"feature_count"`
+	NumClasses   int       `json:"num_classes" bson:"num_classes"`
+	Weights      []float32 `json:"weights" bson:"weights"`
+	Biases       []float32 `json:"biases" bson:"biases"`
+	Trained      bool      `json:"trained" bson:"trained"`
 }
 
 func NewModel() *Model {
