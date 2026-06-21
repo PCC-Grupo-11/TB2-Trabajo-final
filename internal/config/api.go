@@ -63,12 +63,9 @@ func LoadAPIConfig() (*APIConfig, error) {
 }
 
 func splitAndTrim(s, sep string) []string {
-	parts := strings.Split(s, sep)
-	out := make([]string, 0, len(parts))
-
-	for _, p := range parts {
-		trimmed := strings.TrimSpace(p)
-		if trimmed != "" {
+	var out []string
+	for p := range strings.SplitSeq(s, sep) {
+		if trimmed := strings.TrimSpace(p); trimmed != "" {
 			out = append(out, trimmed)
 		}
 	}

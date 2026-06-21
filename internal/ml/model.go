@@ -1,7 +1,7 @@
 package ml
 
 import (
-	"math/rand"
+	"math/rand/v2"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 )
@@ -15,7 +15,7 @@ type Model struct {
 }
 
 func NewModel() *Model {
-	rng := rand.New(rand.NewSource(config.GlobalSeed))
+	rng := rand.New(rand.NewPCG(uint64(config.GlobalSeed), uint64(config.GlobalSeed)))
 
 	totalWeights := config.TotalFeatures * config.NumClasses
 	weights := make([]float32, totalWeights)
