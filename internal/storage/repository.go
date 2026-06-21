@@ -8,6 +8,7 @@ import (
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/protocol"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Repository struct {
@@ -20,9 +21,23 @@ func NewRepository(ctx context.Context, uri string) (*Repository, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	db := client.Database(DatabaseName)
+
+	coll := db.Collection(UsersCollection)
+	index := mongo.IndexModel{
+		Keys:    bson.D{{Key: "username", Value: 1}},
+		Options: options.Index().SetUnique(true),
+	}
+
+	if _, err := coll.Indexes().CreateOne(ctx, index); err != nil {
+		client.Disconnect(context.Background())
+		return nil, fmt.Errorf("create unique username index: %w", err)
+	}
+
 	return &Repository{
 		client: client,
-		db:     client.Database(DatabaseName),
+		db:     db,
 	}, nil
 }
 
@@ -46,6 +61,7 @@ func (r *Repository) CreateUser(ctx context.Context, username, hashedPassword st
 
 func (r *Repository) FindUser(ctx context.Context, username string) (*User, error) {
 	coll := r.db.Collection(UsersCollection)
+
 	var user User
 	err := coll.FindOne(ctx, bson.M{"username": username}).Decode(&user)
 	if err != nil {
