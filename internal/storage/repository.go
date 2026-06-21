@@ -56,7 +56,10 @@ func (r *Repository) CreateUser(ctx context.Context, username, hashedPassword st
 		HashedPassword: hashedPassword,
 		CreatedAt:      time.Now(),
 	})
-	return fmt.Errorf("create user %q: %w", username, err)
+	if err != nil {
+		return fmt.Errorf("create user %q: %w", username, err)
+	}
+	return nil
 }
 
 func (r *Repository) FindUser(ctx context.Context, username string) (*User, error) {
