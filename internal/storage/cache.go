@@ -42,8 +42,16 @@ func (c *Cache) IncrCounter(ctx context.Context, key string) error {
 	return c.client.Incr(ctx, key).Err()
 }
 
+func (c *Cache) IncrByFloat(ctx context.Context, key string, value float64) error {
+	return c.client.IncrByFloat(ctx, key, value).Err()
+}
+
 func (c *Cache) GetCounter(ctx context.Context, key string) (int64, error) {
 	return c.client.Get(ctx, key).Int64()
+}
+
+func (c *Cache) GetFloat64(ctx context.Context, key string) (float64, error) {
+	return c.client.Get(ctx, key).Float64()
 }
 
 func (c *Cache) Ping(ctx context.Context) error {
