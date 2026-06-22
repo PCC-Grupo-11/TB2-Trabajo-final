@@ -7,3 +7,5 @@ data/raw/*.csv
 data/processed/*.csv
 data/training/*.csv
 cmd/test_client
+cmd/verify_features
+*_test.go
