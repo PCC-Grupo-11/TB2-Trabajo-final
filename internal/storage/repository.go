@@ -73,13 +73,12 @@ func (r *Repository) FindUser(ctx context.Context, username string) (*User, erro
 	return &user, nil
 }
 
-func (r *Repository) SavePrediction(ctx context.Context, userID string, input protocol.PredictRequest, response protocol.PredictionResult, latencyMs float64) error {
+func (r *Repository) SavePrediction(ctx context.Context, userID string, input protocol.PredictRequest, response protocol.PredictionResult) error {
 	coll := r.db.Collection(PredictionsCollection)
 	_, err := coll.InsertOne(ctx, Prediction{
 		UserID:    userID,
 		Input:     input,
 		Response:  response,
-		LatencyMs: latencyMs,
 		CreatedAt: time.Now(),
 	})
 	return err

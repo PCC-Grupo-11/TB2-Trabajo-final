@@ -58,7 +58,6 @@ func (v *Vectorizer) Vectorize(input *protocol.PredictRequest) (protocol.Predict
 
 type HexRecord struct {
 	ParentHex string
-	ChildHex  string
 	Record    protocol.PredictRecord
 }
 
@@ -106,7 +105,6 @@ func (v *Vectorizer) VectorizeBulk(categories *protocol.BulkPredictRequest) ([]H
 
 			results = append(results, HexRecord{
 				ParentHex: parentHex,
-				ChildHex:  childHex,
 				Record:    protocol.PredictRecord{Features: features},
 			})
 		}

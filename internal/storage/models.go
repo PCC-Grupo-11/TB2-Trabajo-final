@@ -39,7 +39,6 @@ type Prediction struct {
 	UserID    string                    `bson:"user_id"`
 	Input     protocol.PredictRequest   `bson:"input"`
 	Response  protocol.PredictionResult `bson:"response"`
-	LatencyMs float64                   `bson:"latency_ms"`
 	CreatedAt time.Time                 `bson:"created_at"`
 }
 

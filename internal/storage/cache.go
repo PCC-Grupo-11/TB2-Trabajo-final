@@ -42,6 +42,10 @@ func (c *Cache) IncrCounter(ctx context.Context, key string) error {
 	return c.client.Incr(ctx, key).Err()
 }
 
+func (c *Cache) IncrBy(ctx context.Context, key string, count int64) error {
+	return c.client.IncrBy(ctx, key, count).Err()
+}
+
 func (c *Cache) IncrByFloat(ctx context.Context, key string, value float64) error {
 	return c.client.IncrByFloat(ctx, key, value).Err()
 }

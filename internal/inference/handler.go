@@ -29,12 +29,15 @@ func HandleConnection(conn net.Conn, model *ml.Model) {
 
 	for i := range req.Records {
 		rec := dataset.Record{Features: req.Records[i].Features}
+		recStart := time.Now()
 		class, confidence, probs := model.Predict(&rec)
+		recLatency := float64(time.Since(recStart).Microseconds()) / 1000.0
 
 		results[i] = protocol.PredictionResult{
 			Class:         class,
 			Confidence:    confidence,
 			Probabilities: probs,
+			LatencyMs:     recLatency,
 		}
 	}
 
