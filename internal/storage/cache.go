@@ -24,7 +24,7 @@ func NewCache(addr string, ttl time.Duration) (*Cache, error) {
 	return &Cache{client: client, ttl: ttl}, nil
 }
 
-func PredictHash(input any) string {
+func CacheKey(input any) string {
 	data, _ := json.Marshal(input)
 	hash := md5.Sum(data)
 	return hex.EncodeToString(hash[:])
