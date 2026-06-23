@@ -31,7 +31,7 @@ func HandleConnection(conn net.Conn, model *ml.Model) {
 		rec := dataset.Record{Features: req.Records[i].Features}
 		recStart := time.Now()
 		class, confidence, probs := model.Predict(&rec)
-		recLatency := float64(time.Since(recStart).Microseconds()) / 1000.0
+		recLatency := float64(time.Since(recStart).Nanoseconds()) / 1e6
 
 		results[i] = protocol.PredictionResult{
 			Class:         class,
@@ -41,7 +41,7 @@ func HandleConnection(conn net.Conn, model *ml.Model) {
 		}
 	}
 
-	latencyMs := float64(time.Since(start).Microseconds()) / 1000.0
+	latencyMs := float64(time.Since(start).Nanoseconds()) / 1e6
 
 	resp := protocol.InferenceResponse{
 		Predictions: results,
