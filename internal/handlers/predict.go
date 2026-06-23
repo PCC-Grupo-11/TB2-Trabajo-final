@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/auth"
@@ -38,7 +41,7 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 			"class":         cached.Class,
 			"confidence":    cached.Confidence,
 			"probabilities": cached.Probabilities,
-			"latency_ms":    cached.LatencyMs,
+			"latency_ms":    0,
 			"cached":        true,
 		})
 		return
@@ -106,6 +109,14 @@ func (h *Handler) checkCache(ctx context.Context, hash string) *protocol.Predict
 	return &cr
 }
 
+func parentCacheKey(parentHex string, req *protocol.BulkPredictRequest) string {
+	raw := fmt.Sprintf("%s|%d|%s|%s|%s|%s|%s",
+		parentHex, req.Timestamp, req.Agency, req.ComplaintType,
+		req.Descriptor, req.LocationType, req.Borough)
+	hash := md5.Sum([]byte(raw))
+	return hex.EncodeToString(hash[:])
+}
+
 func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 	var req protocol.BulkPredictRequest
 	if err := protocol.ReadMessage(r.Body, &req); err != nil {
@@ -113,7 +124,41 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hexRecords, err := h.Vec.VectorizeBulk(&req)
+	parentResults := make(map[string]protocol.HexPrediction, len(req.H3Hexes))
+	var missingHexes []string
+
+	if h.Cache != nil {
+		for _, parentHex := range req.H3Hexes {
+			data, err := h.Cache.GetPrediction(r.Context(), parentCacheKey(parentHex, &req))
+			if err != nil {
+				missingHexes = append(missingHexes, parentHex)
+				continue
+			}
+
+			var hp protocol.HexPrediction
+			if err := json.Unmarshal(data, &hp); err != nil {
+				logger.Warn("parent cache data corrupted", "parent_hex", parentHex, "error", err)
+				missingHexes = append(missingHexes, parentHex)
+				continue
+			}
+			parentResults[parentHex] = hp
+		}
+	} else {
+		missingHexes = req.H3Hexes
+	}
+
+	if len(parentResults) == len(req.H3Hexes) {
+		protocol.WriteJSON(w, http.StatusOK, map[string]any{
+			"results":    collectHexValues(parentResults),
+			"latency_ms": 0,
+			"cached": true,
+		})
+		return
+	}
+
+	filteredReq := req
+	filteredReq.H3Hexes = missingHexes
+	hexRecords, err := h.Vec.VectorizeBulk(&filteredReq)
 	if err != nil {
 		if _, ok := err.(vectorizer.ValidationError); ok {
 			protocol.WriteJSON(w, http.StatusBadRequest, protocol.ErrorResponse{Error: err.Error()})
@@ -176,14 +221,28 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	hexPredictions := averageByParent(hexRecords, results)
-
-	resp := protocol.BulkPredictResponse{
-		Results:   hexPredictions,
-		LatencyMs: latencyMs,
+	for _, hp := range averageByParent(hexRecords, results) {
+		if h.Cache != nil {
+			if data, err := json.Marshal(hp); err == nil {
+				h.Cache.SetPrediction(r.Context(), parentCacheKey(hp.Hex, &req), data)
+			}
+		}
+		parentResults[hp.Hex] = hp
 	}
 
-	protocol.WriteJSON(w, http.StatusOK, resp)
+	protocol.WriteJSON(w, http.StatusOK, map[string]any{
+		"results":    collectHexValues(parentResults),
+		"latency_ms": latencyMs,
+		"cached":     false,
+	})
+}
+
+func collectHexValues(m map[string]protocol.HexPrediction) []protocol.HexPrediction {
+	out := make([]protocol.HexPrediction, 0, len(m))
+	for _, v := range m {
+		out = append(out, v)
+	}
+	return out
 }
 
 func averageByParent(

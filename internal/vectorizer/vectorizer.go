@@ -76,7 +76,7 @@ func (v *Vectorizer) VectorizeBulk(categories *protocol.BulkPredictRequest) ([]H
 	for _, parentHex := range categories.H3Hexes {
 		cell := h3.CellFromString(parentHex)
 		if !cell.IsValid() {
-			return nil, fmt.Errorf("invalid hex %q", parentHex)
+			return nil, ValidationError(fmt.Sprintf("invalid hex %q", parentHex))
 		}
 
 		res := cell.Resolution()
