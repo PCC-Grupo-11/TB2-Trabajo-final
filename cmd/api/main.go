@@ -63,12 +63,12 @@ func main() {
 	h := handlers.New(repo, cache, vec, lb, authSvc, cfg)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /health", h.Health)
-	mux.HandleFunc("POST /auth/register", h.Register)
-	mux.HandleFunc("POST /auth/login", h.Login)
-	mux.Handle("POST /predict", authSvc.Middleware(http.HandlerFunc(h.Predict)))
-	mux.Handle("POST /predict/bulk", authSvc.Middleware(http.HandlerFunc(h.PredictBulk)))
-	mux.Handle("GET /metrics", authSvc.Middleware(http.HandlerFunc(h.Metrics)))
+	mux.HandleFunc("GET /api/v1/health", h.Health)
+	mux.HandleFunc("POST /api/v1/auth/register", h.Register)
+	mux.HandleFunc("POST /api/v1/auth/login", h.Login)
+	mux.Handle("POST /api/v1/predict", authSvc.Middleware(http.HandlerFunc(h.Predict)))
+	mux.Handle("POST /api/v1/predict/bulk", authSvc.Middleware(http.HandlerFunc(h.PredictBulk)))
+	mux.Handle("GET /api/v1/metrics", authSvc.Middleware(http.HandlerFunc(h.Metrics)))
 
 	server := &http.Server{
 		Addr:    ":" + cfg.Port,
