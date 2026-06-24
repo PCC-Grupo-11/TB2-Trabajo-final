@@ -40,7 +40,7 @@ RUN CGO_ENABLED=1 \
     ./cmd/inference
 
 # API image
-FROM gcr.io/distroless/static-debian12 AS api
+FROM alpine:3.20 AS api
 
 COPY --from=build-api /out/api /api
 COPY --from=builder /src/data/artifacts/mappings /data/artifacts/mappings
@@ -53,7 +53,7 @@ EXPOSE 8080
 ENTRYPOINT ["/api"]
 
 # Inference image
-FROM gcr.io/distroless/static-debian12 AS inference
+FROM alpine:3.20 AS inference
 
 COPY --from=build-inference /out/inference /inference
 
