@@ -2,6 +2,11 @@ FROM --platform=$BUILDPLATFORM golang:1.26-alpine AS builder
 
 WORKDIR /src
 
+RUN apk add --no-cache \
+    build-base \
+    musl-dev \
+    linux-headers
+
 COPY go.mod go.sum ./
 RUN go mod download
 
