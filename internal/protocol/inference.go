@@ -22,4 +22,5 @@ type PredictionResult struct {
 	Class         int       `json:"class"`
 	Confidence    float32   `json:"confidence"`
 	Probabilities []float32 `json:"probabilities"`
+	LatencyMs     float64   `json:"latency_ms"`
 }

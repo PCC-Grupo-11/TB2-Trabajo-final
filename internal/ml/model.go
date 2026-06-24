@@ -1,21 +1,21 @@
 package ml
 
 import (
-	"math/rand"
+	"math/rand/v2"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 )
 
 type Model struct {
-	FeatureCount int       `json:"feature_count"`
-	NumClasses   int       `json:"num_classes"`
-	Weights      []float32 `json:"weights"`
-	Biases       []float32 `json:"biases"`
-	Trained      bool      `json:"trained"`
+	FeatureCount int       `json:"feature_count" bson:"feature_count"`
+	NumClasses   int       `json:"num_classes" bson:"num_classes"`
+	Weights      []float32 `json:"weights" bson:"weights"`
+	Biases       []float32 `json:"biases" bson:"biases"`
+	Trained      bool      `json:"trained" bson:"trained"`
 }
 
 func NewModel() *Model {
-	rng := rand.New(rand.NewSource(config.GlobalSeed))
+	rng := rand.New(rand.NewPCG(uint64(config.GlobalSeed), uint64(config.GlobalSeed)))
 
 	totalWeights := config.TotalFeatures * config.NumClasses
 	weights := make([]float32, totalWeights)
