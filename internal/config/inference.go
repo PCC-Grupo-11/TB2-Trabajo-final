@@ -5,18 +5,13 @@ import (
 )
 
 type InferenceConfig struct {
-	Port     string
-	MongoURI string
+	Port      string
+	ModelPath string
 }
 
 func LoadInferenceConfig() (*InferenceConfig, error) {
-	mongoURI, err := env.RequiredEnv("MONGO_URI")
-	if err != nil {
-		return nil, err
-	}
-
 	return &InferenceConfig{
-		Port:     env.GetEnv("INFERENCE_PORT", "9001"),
-		MongoURI: mongoURI,
+		Port:      env.GetEnv("INFERENCE_PORT", "9001"),
+		ModelPath: env.GetEnv("MODEL_PATH", "/models/model.json"),
 	}, nil
 }

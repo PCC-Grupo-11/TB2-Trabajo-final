@@ -11,6 +11,23 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+func Connect(ctx context.Context, uri string) (*mongo.Client, error) {
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
+
+	client, err := mongo.Connect(opts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
+	}
+
+	if err := client.Ping(ctx, nil); err != nil {
+		_ = client.Disconnect(context.Background())
+		return nil, fmt.Errorf("failed to ping MongoDB: %w", err)
+	}
+
+	return client, nil
+}
+
 type Repository struct {
 	client *mongo.Client
 	db     *mongo.Database

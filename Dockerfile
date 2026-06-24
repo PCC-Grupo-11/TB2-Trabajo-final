@@ -60,8 +60,10 @@ ENTRYPOINT ["/api"]
 FROM alpine:3.20 AS inference
 
 COPY --from=build-inference /out/inference /inference
+COPY --from=builder /src/data/artifacts/model.json /models/model.json
 
 ENV INFERENCE_PORT=9001
+ENV MODEL_PATH=/models/model.json
 
 EXPOSE 9001
 
