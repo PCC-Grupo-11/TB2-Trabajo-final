@@ -55,6 +55,7 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		missingHexes = req.H3Hexes
 	}
 
+	// 7 = avg children per hex at res+1; if VectorizeBulk resolution changes, update this
 	parentHits := int64(len(parentResults)) * 7
 
 	if len(parentResults) == len(req.H3Hexes) {
@@ -127,10 +128,10 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 }
 
 func writeBulkPredictResponse(w http.ResponseWriter, results []protocol.HexPrediction, latencyMs float64, cached bool) {
-	protocol.WriteJSON(w, http.StatusOK, map[string]any{
-		"results":    results,
-		"latency_ms": latencyMs,
-		"cached":     cached,
+	protocol.WriteJSON(w, http.StatusOK, protocol.BulkPredictResponse{
+		Results:   results,
+		LatencyMs: latencyMs,
+		Cached:    cached,
 	})
 }
 

@@ -2,10 +2,10 @@ package storage
 
 import (
 	"context"
-	"crypto/md5"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"hash/fnv"
+	"strconv"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -25,8 +25,9 @@ func NewCache(addr string, ttl time.Duration) (*Cache, error) {
 }
 
 func HashString(s string) string {
-	h := md5.Sum([]byte(s))
-	return hex.EncodeToString(h[:])
+	h := fnv.New64a()
+	h.Write([]byte(s))
+	return strconv.FormatUint(h.Sum64(), 16)
 }
 
 func CacheKey(input any) string {

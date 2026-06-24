@@ -3,6 +3,7 @@ package protocol
 type BulkPredictResponse struct {
 	Results   []HexPrediction `json:"results"`
 	LatencyMs float64         `json:"latency_ms"`
+	Cached    bool            `json:"cached"`
 }
 
 type HexPrediction struct {

@@ -33,7 +33,7 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 
 	cacheKey := storage.CacheKey(record)
 	if cached := h.checkCache(r.Context(), cacheKey); cached != nil {
-		writePredictResponse(w, *cached, true)
+		h.writePredictResponse(w, *cached, true)
 		return
 	}
 
@@ -63,10 +63,10 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 		h.Cache.IncrCounter(r.Context(), "cache_misses")
 	}
 
-	writePredictResponse(w, result, false)
+	h.writePredictResponse(w, result, false)
 }
 
-func writePredictResponse(w http.ResponseWriter, result protocol.PredictionResult, cached bool) {
+func (h *Handler) writePredictResponse(w http.ResponseWriter, result protocol.PredictionResult, cached bool) {
 	latencyMs := result.LatencyMs
 	if cached {
 		latencyMs = 0
