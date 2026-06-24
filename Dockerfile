@@ -46,6 +46,7 @@ RUN ls -lah /
 # API image
 FROM alpine:3.20 AS api
 
+RUN apk add --no-cache tzdata
 COPY --from=build-api /out/api /api
 COPY --from=builder /src/data/artifacts/mappings /data/artifacts/mappings
 
