@@ -1,9 +1,18 @@
 package env
 
 import (
+	"fmt"
 	"os"
 	"strings"
 )
+
+func RequiredEnv(key string) (string, error) {
+	v := os.Getenv(key)
+	if v == "" {
+		return "", fmt.Errorf("%s is required", key)
+	}
+	return v, nil
+}
 
 func GetEnv(key, defaultVal string) string {
 	if v := os.Getenv(key); v != "" {

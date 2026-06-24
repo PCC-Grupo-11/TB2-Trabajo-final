@@ -58,7 +58,12 @@ func main() {
 	}
 	logger.Info("vectorizer loaded", "mappings_dir", cfg.MappingsDir)
 
-	lb := clients.NewLoadBalancer(cfg.InferenceAddrs, cfg.InferenceTimeout)
+	lb, err := clients.NewLoadBalancer(cfg.InferenceAddrs, cfg.InferenceTimeout)
+	if err != nil {
+		logger.Error("invalid load balancer config", "error", err)
+		os.Exit(1)
+	}
+
 	authSvc := auth.New(repo, cfg.JWTSecret, cfg.JWTExpiration)
 	h := handlers.New(repo, cache, vec, lb, authSvc, cfg)
 
@@ -71,8 +76,11 @@ func main() {
 	mux.Handle("GET /api/v1/metrics", authSvc.Middleware(http.HandlerFunc(h.Metrics)))
 
 	server := &http.Server{
-		Addr:    ":" + cfg.Port,
-		Handler: handlers.LimitBody(mux),
+		Addr:         ":" + cfg.Port,
+		Handler:      handlers.LimitBody(mux),
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  60 * time.Second,
 	}
 
 	quit := make(chan os.Signal, 1)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/auth"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/logger"
@@ -49,7 +50,12 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 
 	if h.Repo != nil {
 		go func() {
-			err := h.Repo.SavePrediction(context.Background(), userID, req, result)
+			ctx, cancel := context.WithTimeout(
+				context.Background(),
+				5*time.Second,
+			)
+			defer cancel()
+			err := h.Repo.SavePrediction(ctx, userID, req, result)
 			if err != nil {
 				logger.Error("failed to save prediction to database", "error", err)
 			}

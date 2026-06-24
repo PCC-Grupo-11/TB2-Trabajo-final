@@ -17,11 +17,14 @@ type LoadBalancer struct {
 	timeout time.Duration
 }
 
-func NewLoadBalancer(addrs []string, timeout time.Duration) *LoadBalancer {
+func NewLoadBalancer(addrs []string, timeout time.Duration) (*LoadBalancer, error) {
+	if len(addrs) == 0 {
+		return nil, fmt.Errorf("at least one inference address is required")
+	}
 	return &LoadBalancer{
 		addrs:   addrs,
 		timeout: timeout,
-	}
+	}, nil
 }
 
 func (lb *LoadBalancer) Predict(req *protocol.InferenceRequest) (*protocol.InferenceResponse, error) {

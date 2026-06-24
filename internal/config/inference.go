@@ -1,8 +1,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/env"
 )
 
@@ -12,9 +10,9 @@ type InferenceConfig struct {
 }
 
 func LoadInferenceConfig() (*InferenceConfig, error) {
-	mongoURI := env.GetEnv("MONGO_URI", "")
-	if mongoURI == "" {
-		return nil, fmt.Errorf("MONGO_URI is required")
+	mongoURI, err := env.RequiredEnv("MONGO_URI")
+	if err != nil {
+		return nil, err
 	}
 
 	return &InferenceConfig{

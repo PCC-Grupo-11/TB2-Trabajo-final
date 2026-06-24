@@ -11,8 +11,8 @@ import (
 const (
 	DefaultAPIPort          = "8080"
 	DefaultMappingsDir      = "data/artifacts/mappings"
-	DefaultRedisTTL         = 4 * time.Hour
-	DefaultJWTExpiration    = 3 * time.Hour
+	DefaultRedisTTL         = 24 * time.Hour
+	DefaultJWTExpiration    = 16 * time.Hour
 	DefaultInferenceTimeout = 5 * time.Second
 )
 
@@ -29,24 +29,24 @@ type APIConfig struct {
 }
 
 func LoadAPIConfig() (*APIConfig, error) {
-	jwtSecret := env.GetEnv("JWT_SECRET", "")
-	if jwtSecret == "" {
-		return nil, fmt.Errorf("JWT_SECRET is required")
+	jwtSecret, err := env.RequiredEnv("JWT_SECRET")
+	if err != nil {
+		return nil, err
 	}
 
-	inferenceAddrsStr := env.GetEnv("INFERENCE_ADDRS", "")
-	if inferenceAddrsStr == "" {
-		return nil, fmt.Errorf("INFERENCE_ADDRS is required")
+	inferenceAddrsStr, err := env.RequiredEnv("INFERENCE_ADDRS")
+	if err != nil {
+		return nil, err
 	}
 
-	mongoURI := env.GetEnv("MONGO_URI", "")
-	if mongoURI == "" {
-		return nil, fmt.Errorf("MONGO_URI is required")
+	mongoURI, err := env.RequiredEnv("MONGO_URI")
+	if err != nil {
+		return nil, err
 	}
 
-	redisAddr := env.GetEnv("REDIS_ADDR", "")
-	if redisAddr == "" {
-		return nil, fmt.Errorf("REDIS_ADDR is required")
+	redisAddr, err := env.RequiredEnv("REDIS_ADDR")
+	if err != nil {
+		return nil, err
 	}
 
 	addrs := splitAndTrim(inferenceAddrsStr, ",")

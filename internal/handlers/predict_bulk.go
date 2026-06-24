@@ -70,9 +70,15 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		h.Cache.IncrBy(r.Context(), "cache_hits", parentHits)
 	}
 
-	filteredReq := req
-	filteredReq.H3Hexes = missingHexes
-	hexRecords, err := h.Vec.VectorizeBulk(&filteredReq)
+	hexRecords, err := h.Vec.VectorizeBulk(&protocol.BulkPredictRequest{
+		Timestamp:     req.Timestamp,
+		Agency:        req.Agency,
+		ComplaintType: req.ComplaintType,
+		Descriptor:    req.Descriptor,
+		LocationType:  req.LocationType,
+		Borough:       req.Borough,
+		H3Hexes:       missingHexes,
+	})
 	if err != nil {
 		h.writeVectorizationError(w, err)
 		return
