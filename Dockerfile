@@ -27,6 +27,8 @@ RUN CGO_ENABLED=1 \
     -o /out/api \
     ./cmd/api
 
+RUN ls -lah /
+
 # Build inference binary
 FROM builder AS build-inference
 
@@ -38,6 +40,8 @@ RUN CGO_ENABLED=1 \
     -ldflags="-s -w -buildid=" \
     -o /out/inference \
     ./cmd/inference
+
+RUN ls -lah /
 
 # API image
 FROM alpine:3.20 AS api
