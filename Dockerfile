@@ -27,8 +27,6 @@ RUN CGO_ENABLED=1 \
     -o /out/api \
     ./cmd/api
 
-RUN ls -lah /
-
 # Build inference binary
 FROM builder AS build-inference
 
@@ -41,10 +39,8 @@ RUN CGO_ENABLED=1 \
     -o /out/inference \
     ./cmd/inference
 
-RUN ls -lah /
-
 # API image
-FROM alpine:3.20 AS api
+FROM alpine:3.24 AS api
 
 RUN apk add --no-cache tzdata
 COPY --from=build-api /out/api /api
@@ -58,7 +54,7 @@ EXPOSE 8080
 ENTRYPOINT ["/api"]
 
 # Inference image
-FROM alpine:3.20 AS inference
+FROM alpine:3.24 AS inference
 
 COPY --from=build-inference /out/inference /inference
 COPY --from=builder /src/data/artifacts/model.json /models/model.json
