@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -24,8 +22,7 @@ func parentCacheKey(parentHex string, req *protocol.BulkPredictRequest) string {
 		req.LocationType,
 		req.Borough,
 	)
-	hash := md5.Sum([]byte(raw))
-	return hex.EncodeToString(hash[:])
+	return storage.HashString(raw)
 }
 
 func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
@@ -58,13 +55,18 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		missingHexes = req.H3Hexes
 	}
 
+	parentHits := int64(len(parentResults)) * 7
+
 	if len(parentResults) == len(req.H3Hexes) {
-		protocol.WriteJSON(w, http.StatusOK, map[string]any{
-			"results":    collectHexValues(parentResults),
-			"latency_ms": 0,
-			"cached":     true,
-		})
+		if h.Cache != nil {
+			h.Cache.IncrBy(r.Context(), "cache_hits", parentHits)
+		}
+		writeBulkPredictResponse(w, collectHexValues(parentResults), 0, true)
 		return
+	}
+
+	if h.Cache != nil {
+		h.Cache.IncrBy(r.Context(), "cache_hits", parentHits)
 	}
 
 	filteredReq := req
@@ -82,18 +84,10 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 	uncachedIndices := make([]int, 0, n)
 
 	for i, hr := range hexRecords {
-		if h.Cache != nil {
-			cacheKey := storage.CacheKey(hr.Record)
-			data, err := h.Cache.GetPrediction(r.Context(), cacheKey)
-			if err == nil {
-				var entry protocol.PredictionResult
-				if err := json.Unmarshal(data, &entry); err != nil {
-					logger.Warn("child cache data corrupted", "cache_key", cacheKey, "error", err)
-				} else {
-					results[i] = entry
-					continue
-				}
-			}
+		cacheKey := storage.CacheKey(hr.Record)
+		if cached := h.checkCache(r.Context(), cacheKey); cached != nil {
+			results[i] = *cached
+			continue
 		}
 		uncachedRecords = append(uncachedRecords, hr.Record)
 		uncachedIndices = append(uncachedIndices, i)
@@ -120,6 +114,7 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 			}
 			h.Cache.IncrBy(r.Context(), "predictions_count", int64(len(uncachedIndices)))
 			h.Cache.IncrByFloat(r.Context(), "latency_sum", latencyMs)
+			h.Cache.IncrBy(r.Context(), "cache_misses", int64(len(uncachedIndices)))
 		}
 	}
 
@@ -128,10 +123,14 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		parentResults[hp.Hex] = hp
 	}
 
+	writeBulkPredictResponse(w, collectHexValues(parentResults), latencyMs, false)
+}
+
+func writeBulkPredictResponse(w http.ResponseWriter, results []protocol.HexPrediction, latencyMs float64, cached bool) {
 	protocol.WriteJSON(w, http.StatusOK, map[string]any{
-		"results":    collectHexValues(parentResults),
+		"results":    results,
 		"latency_ms": latencyMs,
-		"cached":     false,
+		"cached":     cached,
 	})
 }
 

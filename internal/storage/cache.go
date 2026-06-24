@@ -24,10 +24,14 @@ func NewCache(addr string, ttl time.Duration) (*Cache, error) {
 	return &Cache{client: client, ttl: ttl}, nil
 }
 
+func HashString(s string) string {
+	h := md5.Sum([]byte(s))
+	return hex.EncodeToString(h[:])
+}
+
 func CacheKey(input any) string {
 	data, _ := json.Marshal(input)
-	hash := md5.Sum(data)
-	return hex.EncodeToString(hash[:])
+	return HashString(string(data))
 }
 
 func (c *Cache) GetPrediction(ctx context.Context, hash string) ([]byte, error) {

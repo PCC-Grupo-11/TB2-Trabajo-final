@@ -49,9 +49,14 @@ func LoadAPIConfig() (*APIConfig, error) {
 		return nil, fmt.Errorf("REDIS_ADDR is required")
 	}
 
+	addrs := splitAndTrim(inferenceAddrsStr, ",")
+	if len(addrs) == 0 {
+		return nil, fmt.Errorf("INFERENCE_ADDRS must contain at least one address")
+	}
+
 	return &APIConfig{
 		Port:             env.GetEnv("API_PORT", DefaultAPIPort),
-		InferenceAddrs:   splitAndTrim(inferenceAddrsStr, ","),
+		InferenceAddrs:   addrs,
 		MongoURI:         mongoURI,
 		RedisAddr:        redisAddr,
 		JWTSecret:        jwtSecret,

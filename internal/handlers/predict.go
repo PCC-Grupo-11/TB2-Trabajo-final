@@ -13,7 +13,11 @@ import (
 )
 
 func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
-	userID, _ := r.Context().Value(auth.UserIDKey).(string)
+	userID, ok := r.Context().Value(auth.UserIDKey).(string)
+	if !ok {
+		protocol.WriteJSON(w, http.StatusUnauthorized, protocol.ErrorResponse{Error: "unauthorized"})
+		return
+	}
 
 	var req protocol.PredictRequest
 	if err := protocol.ReadMessage(r.Body, &req); err != nil {
@@ -29,13 +33,7 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 
 	cacheKey := storage.CacheKey(record)
 	if cached := h.checkCache(r.Context(), cacheKey); cached != nil {
-		protocol.WriteJSON(w, http.StatusOK, map[string]any{
-			"class":         cached.Class,
-			"confidence":    cached.Confidence,
-			"probabilities": cached.Probabilities,
-			"latency_ms":    0,
-			"cached":        true,
-		})
+		writePredictResponse(w, *cached, true)
 		return
 	}
 
@@ -65,12 +63,20 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 		h.Cache.IncrCounter(r.Context(), "cache_misses")
 	}
 
+	writePredictResponse(w, result, false)
+}
+
+func writePredictResponse(w http.ResponseWriter, result protocol.PredictionResult, cached bool) {
+	latencyMs := result.LatencyMs
+	if cached {
+		latencyMs = 0
+	}
 	protocol.WriteJSON(w, http.StatusOK, map[string]any{
 		"class":         result.Class,
 		"confidence":    result.Confidence,
 		"probabilities": result.Probabilities,
-		"latency_ms":    result.LatencyMs,
-		"cached":        false,
+		"latency_ms":    latencyMs,
+		"cached":        cached,
 	})
 }
 

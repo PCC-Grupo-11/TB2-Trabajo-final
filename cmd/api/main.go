@@ -6,10 +6,12 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/auth"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/clients"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
+	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/env"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/handlers"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/logger"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/storage"
@@ -25,11 +27,12 @@ func main() {
 
 	logger.Info("api server starting",
 		"port", cfg.Port,
-		"mongo_uri", cfg.MongoURI,
+		"mongo_uri", env.RedactMongoURI(cfg.MongoURI),
 		"redis_addr", cfg.RedisAddr,
 	)
 
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	repo, err := storage.NewRepository(ctx, cfg.MongoURI)
 	if err != nil {
@@ -69,7 +72,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    ":" + cfg.Port,
-		Handler: mux,
+		Handler: handlers.LimitBody(mux),
 	}
 
 	go func() {
@@ -84,5 +87,9 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	logger.Info("shutting down server")
-	server.Shutdown(context.Background())
+	ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := server.Shutdown(ctx); err != nil {
+		logger.Error("shutdown error", "error", err)
+	}
 }

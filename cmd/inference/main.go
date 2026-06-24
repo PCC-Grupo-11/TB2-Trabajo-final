@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
+	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/env"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/inference"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/logger"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/storage"
@@ -19,7 +20,7 @@ func main() {
 
 	logger.Info("inference server starting",
 		"port", cfg.Port,
-		"mongo_uri", cfg.MongoURI,
+		"mongo_uri", env.RedactMongoURI(cfg.MongoURI),
 	)
 
 	model, err := storage.LoadLatestModelFromURI(cfg.MongoURI)
