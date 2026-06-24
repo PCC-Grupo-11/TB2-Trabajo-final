@@ -13,7 +13,8 @@ ARG TARGETARCH
 # Build API binary
 FROM builder AS build-api
 
-RUN GOOS=$TARGETOS \
+RUN CGO_ENABLED=0 \
+    GOOS=$TARGETOS \
     GOARCH=$TARGETARCH \
     go build \
     -trimpath \
@@ -24,7 +25,8 @@ RUN GOOS=$TARGETOS \
 # Build inference binary
 FROM builder AS build-inference
 
-RUN GOOS=$TARGETOS \
+RUN CGO_ENABLED=0 \
+    GOOS=$TARGETOS \
     GOARCH=$TARGETARCH \
     go build \
     -trimpath \
