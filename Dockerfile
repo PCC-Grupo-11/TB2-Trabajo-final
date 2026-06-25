@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.26-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /src
 
@@ -12,15 +12,10 @@ RUN go mod download
 
 COPY . .
 
-ARG TARGETOS
-ARG TARGETARCH
-
 # Build API binary
 FROM builder AS build-api
 
 RUN CGO_ENABLED=1 \
-    GOOS=$TARGETOS \
-    GOARCH=$TARGETARCH \
     go build \
     -trimpath \
     -ldflags="-s -w -buildid=" \
@@ -31,8 +26,6 @@ RUN CGO_ENABLED=1 \
 FROM builder AS build-inference
 
 RUN CGO_ENABLED=1 \
-    GOOS=$TARGETOS \
-    GOARCH=$TARGETARCH \
     go build \
     -trimpath \
     -ldflags="-s -w -buildid=" \
