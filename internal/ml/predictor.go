@@ -14,10 +14,10 @@ func (m *Model) ComputeProbs(record *dataset.Record, logits, probs []float32) {
 		}
 		logits[c] = sum
 	}
-	Softmax(logits, probs)
+	softmax(logits, probs)
 }
 
-func (m *Model) Predict(record *dataset.Record) (int, float32) {
+func (m *Model) Predict(record *dataset.Record) (int, float32, []float32) {
 	if !m.Trained {
 		logger.Warn("predicting with untrained model")
 	}
@@ -25,5 +25,6 @@ func (m *Model) Predict(record *dataset.Record) (int, float32) {
 	logits, probs := allocForward(m.NumClasses)
 	m.ComputeProbs(record, logits, probs)
 
-	return argmax(probs)
+	class, confidence := argmax(probs)
+	return class, confidence, probs
 }

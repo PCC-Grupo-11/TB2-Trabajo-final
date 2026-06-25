@@ -1,0 +1,89 @@
+services:
+    mongo:
+        image: mongo:latest
+        container_name: mongo
+
+        restart: unless-stopped
+
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: admin
+            MONGO_INITDB_ROOT_PASSWORD: admin
+
+        volumes:
+            - mongo_data:/data/db
+
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "mongosh",
+                    "--quiet",
+                    "--eval",
+                    "db.adminCommand('ping')",
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 10s
+
+    redis:
+        image: redis:8-alpine
+        container_name: redis
+
+        restart: unless-stopped
+
+        volumes:
+            - redis_data:/data
+
+        command: redis-server --appendonly yes
+
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    inference-1:
+        image: ghcr.io/pcc-grupo-11/tb2-trabajo-final/inference:latest
+
+        restart: unless-stopped
+
+        environment:
+            INFERENCE_PORT: 9001
+
+    inference-2:
+        image: ghcr.io/pcc-grupo-11/tb2-trabajo-final/inference:latest
+
+        restart: unless-stopped
+
+        environment:
+            INFERENCE_PORT: 9001
+
+    api:
+        image: ghcr.io/pcc-grupo-11/tb2-trabajo-final/api:latest
+
+        restart: unless-stopped
+
+        ports:
+            - "8080:8080"
+
+        environment:
+            API_PORT: 8080
+            MONGO_URI: mongodb://admin:admin@mongo:27017/admin
+            REDIS_ADDR: redis:6379
+            JWT_SECRET: ${JWT_SECRET}
+            INFERENCE_ADDRS: inference-1:9001,inference-2:9001
+
+        depends_on:
+            mongo:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            inference-1:
+                condition: service_started
+            inference-2:
+                condition: service_started
+
+volumes:
+    mongo_data:
+    redis_data:

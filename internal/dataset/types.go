@@ -1,7 +1,7 @@
 package dataset
 
 import (
-	"math/rand"
+	"math/rand/v2"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
 )
@@ -21,7 +21,7 @@ type Dataset struct {
 }
 
 func (ds *Dataset) Shuffle(seed int64) {
-	rng := rand.New(rand.NewSource(seed))
+	rng := rand.New(rand.NewPCG(uint64(seed), uint64(seed)))
 	rng.Shuffle(len(ds.Records), func(i, j int) {
 		ds.Records[i], ds.Records[j] = ds.Records[j], ds.Records[i]
 	})

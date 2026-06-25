@@ -1,24 +1,22 @@
 package config
 
-import "os"
+import (
+	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/env"
+)
 
 type Config struct {
-	DataPath        string
-	ModelOutputPath string
-	MetadataPath    string
+	DataPath string
+	MongoURI string
 }
 
-func Load() *Config {
+func Load() (*Config, error) {
+	mongoURI, err := env.RequiredEnv("MONGO_URI")
+	if err != nil {
+		return nil, err
+	}
+
 	return &Config{
-		DataPath:        getEnv("DATA_PATH", "data/training/nyc_311_features.csv"),
-		ModelOutputPath: getEnv("MODEL_OUTPUT_PATH", "model/model.json"),
-		MetadataPath:    getEnv("METADATA_OUTPUT_PATH", "model/training_report.json"),
-	}
-}
-
-func getEnv(key, defaultVal string) string {
-	if v := os.Getenv(key); v != "" {
-		return v
-	}
-	return defaultVal
+		DataPath: env.GetEnv("DATA_PATH", "data/training/nyc_311_features.csv"),
+		MongoURI: mongoURI,
+	}, nil
 }
