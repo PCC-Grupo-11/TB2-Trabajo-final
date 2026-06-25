@@ -52,12 +52,15 @@ func main() {
 		"duration_seconds", report.TrainingTimeSeconds,
 	)
 
-	logger.Info("saving model to MongoDB")
-	if err := storage.SaveModelWithURI(cfg.MongoURI, model, report); err != nil {
+	modelPath := "data/artifacts/model.json"
+	logger.Info("saving model to file", "path", modelPath)
+
+	if err := storage.SaveModelToFile(model, report, modelPath); err != nil {
 		logger.Error("failed to save model", "error", err)
 		os.Exit(1)
 	}
-	logger.Info("model saved successfully to MongoDB")
+
+	logger.Info("model saved successfully to file", "path", modelPath)
 
 	fmt.Printf("\nTraining Report:\n")
 	fmt.Printf("\tValidation Loss:    %.4f\n", report.FinalValidationLoss)

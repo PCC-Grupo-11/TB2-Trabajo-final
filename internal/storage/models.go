@@ -9,22 +9,21 @@ import (
 )
 
 type ModelDocument struct {
-	ml.Model `bson:"inline"`
+	ml.Model
 
-	FinalValidationLoss float32 `bson:"final_validation_loss"`
-	Accuracy            float64 `bson:"accuracy"`
-	MAE                 float64 `bson:"mae"`
-	AccuracyAt1         float64 `bson:"accuracy_at_1"`
-	EpochsTrained       int     `bson:"epochs_trained"`
-	EarlyStopped        bool    `bson:"early_stopped"`
-	TotalSamples        int     `bson:"total_samples"`
-	TrainingTimeSeconds float64 `bson:"training_time_seconds"`
-	LearningRate        float32 `bson:"learning_rate"`
-	ShuffleSeed         int64   `bson:"shuffle_seed"`
-	ValidationSplit     float64 `bson:"validation_split"`
-	ConfusionMatrix     [][]int `bson:"confusion_matrix"`
-
-	CreatedAt time.Time `bson:"created_at"`
+	FinalValidationLoss float32   `json:"final_validation_loss"`
+	Accuracy            float64   `json:"accuracy"`
+	MAE                 float64   `json:"mae"`
+	AccuracyAt1         float64   `json:"accuracy_at_1"`
+	EpochsTrained       int       `json:"epochs_trained"`
+	EarlyStopped        bool      `json:"early_stopped"`
+	TotalSamples        int       `json:"total_samples"`
+	TrainingTimeSeconds float64   `json:"training_time_seconds"`
+	LearningRate        float32   `json:"learning_rate"`
+	ShuffleSeed         int64     `json:"shuffle_seed"`
+	ValidationSplit     float64   `json:"validation_split"`
+	ConfusionMatrix     [][]int   `json:"confusion_matrix"`
+	CreatedAt           time.Time `json:"created_at"`
 }
 
 type User struct {
