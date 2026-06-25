@@ -38,7 +38,12 @@ jobs:
         id: repo
         run: echo "name=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
-      - name: Set up Docker Buildx
+      - name: Short SHA
+        id: vars
+        run: |
+          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Set up Buildx
         uses: docker/setup-buildx-action@v4
 
       - name: Build and push (amd64)
@@ -51,12 +56,15 @@ jobs:
           push: true
           platforms: linux/amd64
 
-          tags: |
-            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ github.ref_name == 'main' && 'stable' || 'latest' }}
-            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ github.sha }}
+          provenance: false
 
-          cache-from: type=registry,ref=ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:buildcache,mode=max
+          tags: |
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:amd64
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:amd64-${{ steps.vars.outputs.sha }}
+
+          cache-from: type=gha,scope=${{ matrix.app }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.app }}
+
 
 
   arm64:
@@ -81,7 +89,12 @@ jobs:
         id: repo
         run: echo "name=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
-      - name: Set up Docker Buildx
+      - name: Short SHA
+        id: vars
+        run: |
+          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Set up Buildx
         uses: docker/setup-buildx-action@v4
 
       - name: Build and push (arm64)
@@ -94,9 +107,66 @@ jobs:
           push: true
           platforms: linux/arm64
 
-          tags: |
-            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ github.ref_name == 'main' && 'stable' || 'latest' }}
-            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ github.sha }}
+          provenance: false
 
-          cache-from: type=registry,ref=ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:buildcache,mode=max
+          tags: |
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:arm64
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:arm64-${{ steps.vars.outputs.sha }}
+
+          cache-from: type=gha,scope=${{ matrix.app }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.app }}
+
+  merge:
+    runs-on: ubuntu-latest
+    needs: [amd64, arm64]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [api, inference]
+
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lowercase repo
+        id: repo
+        run: echo "name=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Short SHA
+        id: vars
+        run: |
+          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Tag name
+        id: tag
+        run: |
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            echo "tag=stable" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Create multi-arch manifest (branch tag)
+        run: |
+          docker buildx imagetools create \
+            -t ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ steps.tag.outputs.tag }} \
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:amd64 \
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:arm64
+
+      - name: Create multi-arch manifest (sha)
+        run: |
+          docker buildx imagetools create \
+            -t ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ steps.vars.outputs.sha }} \
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:amd64-${{ steps.vars.outputs.sha }} \
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:arm64-${{ steps.vars.outputs.sha }}
