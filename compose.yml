@@ -49,12 +49,7 @@ services:
         restart: unless-stopped
 
         environment:
-            MONGO_URI: mongodb://admin:admin@mongo:27017/admin
             INFERENCE_PORT: 9001
-
-        depends_on:
-            mongo:
-                condition: service_healthy
 
     inference-2:
         image: ghcr.io/pcc-grupo-11/tb2-trabajo-final/inference:latest
@@ -62,12 +57,7 @@ services:
         restart: unless-stopped
 
         environment:
-            MONGO_URI: mongodb://admin:admin@mongo:27017/admin
             INFERENCE_PORT: 9001
-
-        depends_on:
-            mongo:
-                condition: service_healthy
 
     api:
         image: ghcr.io/pcc-grupo-11/tb2-trabajo-final/api:latest

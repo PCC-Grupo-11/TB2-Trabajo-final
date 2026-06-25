@@ -52,12 +52,7 @@ services:
         restart: unless-stopped
 
         environment:
-            MONGO_URI: mongodb://admin:admin@mongo:27017/admin
             INFERENCE_PORT: 9001
-
-        depends_on:
-            mongo:
-                condition: service_healthy
 
     inference-2:
         build:
@@ -67,12 +62,7 @@ services:
         restart: unless-stopped
 
         environment:
-            MONGO_URI: mongodb://admin:admin@mongo:27017/admin
             INFERENCE_PORT: 9001
-
-        depends_on:
-            mongo:
-                condition: service_healthy
 
     api:
         build:
