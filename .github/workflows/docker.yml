@@ -36,12 +36,11 @@ jobs:
 
       - name: Lowercase repo
         id: repo
-        run: echo "name=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+        run: echo "name=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
       - name: Short SHA
         id: vars
-        run: |
-          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v4
@@ -60,12 +59,10 @@ jobs:
 
           tags: |
             ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:amd64
-            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:amd64-${{ steps.vars.outputs.sha }}
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:amd64-${GITHUB_SHA::7}
 
-          cache-from: type=gha,scope=${{ matrix.app }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.app }}
-
-
+          cache-from: type=gha,scope=${{ matrix.app }}-amd64
+          cache-to: type=gha,mode=max,scope=${{ matrix.app }}-amd64
 
   arm64:
     runs-on: ubuntu-24.04-arm
@@ -87,12 +84,11 @@ jobs:
 
       - name: Lowercase repo
         id: repo
-        run: echo "name=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+        run: echo "name=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
       - name: Short SHA
         id: vars
-        run: |
-          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v4
@@ -111,10 +107,10 @@ jobs:
 
           tags: |
             ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:arm64
-            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:arm64-${{ steps.vars.outputs.sha }}
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:arm64-${GITHUB_SHA::7}
 
-          cache-from: type=gha,scope=${{ matrix.app }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.app }}
+          cache-from: type=gha,scope=${{ matrix.app }}-arm64
+          cache-to: type=gha,mode=max,scope=${{ matrix.app }}-arm64
 
   merge:
     runs-on: ubuntu-latest
@@ -135,23 +131,15 @@ jobs:
 
       - name: Lowercase repo
         id: repo
-        run: echo "name=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
-
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Short SHA
-        id: vars
-        run: |
-          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "name=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
       - name: Tag name
         id: tag
         run: |
           if [ "${GITHUB_REF_NAME}" = "main" ]; then
-            echo "tag=stable" >> $GITHUB_OUTPUT
+            echo "tag=stable" >> "$GITHUB_OUTPUT"
           else
-            echo "tag=latest" >> $GITHUB_OUTPUT
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Set up Buildx
@@ -167,6 +155,6 @@ jobs:
       - name: Create multi-arch manifest (sha)
         run: |
           docker buildx imagetools create \
-            -t ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ steps.vars.outputs.sha }} \
-            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:amd64-${{ steps.vars.outputs.sha }} \
-            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:arm64-${{ steps.vars.outputs.sha }}
+            -t ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${GITHUB_SHA::7} \
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:amd64-${GITHUB_SHA::7} \
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:arm64-${GITHUB_SHA::7}
