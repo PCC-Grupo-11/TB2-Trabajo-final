@@ -34,6 +34,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase repo
+        id: repo
+        run: echo "name=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
@@ -48,11 +52,11 @@ jobs:
           platforms: linux/amd64
 
           tags: |
-            ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ github.ref_name == 'main' && 'stable' || 'latest' }}
-            ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ github.sha }}
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ github.ref_name == 'main' && 'stable' || 'latest' }}
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ github.sha }}
 
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}/${{ matrix.app }}:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}/${{ matrix.app }}:buildcache,mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:buildcache,mode=max
 
 
   arm64:
@@ -73,6 +77,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase repo
+        id: repo
+        run: echo "name=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
@@ -87,7 +95,8 @@ jobs:
           platforms: linux/arm64
 
           tags: |
-            ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ github.ref_name == 'main' && 'stable' || 'latest' }}
-            ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ github.sha }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}/${{ matrix.app }}:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}/${{ matrix.app }}:buildcache,mode=max
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ github.ref_name == 'main' && 'stable' || 'latest' }}
+            ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:${{ github.sha }}
+
+          cache-from: type=registry,ref=ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.repo.outputs.name }}/${{ matrix.app }}:buildcache,mode=max
