@@ -94,13 +94,10 @@ services:
         depends_on:
             mongo:
                 condition: service_healthy
-
             redis:
                 condition: service_healthy
-
             inference-1:
                 condition: service_started
-
             inference-2:
                 condition: service_started
 
