@@ -18,6 +18,13 @@ func main() {
 		logger.Error("invalid config", "error", err)
 		os.Exit(1)
 	}
+	config.NumWorkers = cfg.NumWorkers
+
+	modeI := "concurrent"
+	if config.NumWorkers == 1 {
+		modeI = "sequential"
+	}
+	logger.Info("training mode", "mode", modeI, "workers", config.NumWorkers)
 
 	logger.Info("trainer starting", "data_path", cfg.DataPath)
 
@@ -52,7 +59,13 @@ func main() {
 		"duration_seconds", report.TrainingTimeSeconds,
 	)
 
-	modelPath := "data/artifacts/model.json"
+	var modelPath string
+	if config.NumWorkers == 1 {
+		modelPath = "data/artifacts/model_seq.json"
+	} else {
+		modelPath = "data/artifacts/model.json"
+	}
+
 	logger.Info("saving model to file", "path", modelPath)
 
 	if err := storage.SaveModelToFile(model, report, modelPath); err != nil {
