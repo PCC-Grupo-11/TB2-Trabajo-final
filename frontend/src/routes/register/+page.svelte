@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { auth } from '$lib/stores/auth';
 	import { ApiRequestError } from '$lib/api/client';
+	import Input from '$lib/components/Input.svelte';
 
 	let username = $state('');
 	let password = $state('');
@@ -11,11 +13,15 @@
 	let error = $state('');
 	let success = $state('');
 
+	onMount(() => {
+		if (auth.isAuthenticated()) goto(resolve('/dashboard'));
+	});
+
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
 
 		if (password !== confirmPassword) {
-			error = 'Las contrasenas no coinciden';
+			error = 'Las contraseñas no coinciden';
 			return;
 		}
 
@@ -45,10 +51,6 @@
 
 <div class="flex min-h-screen items-center justify-center p-gutter">
 	<main class="flex w-full max-w-sm flex-col items-center">
-		<header class="mb-stack-lg flex flex-col items-center justify-center">
-			<p class="mt-1 text-center text-sm text-on-surface-variant">Crear una cuenta</p>
-		</header>
-
 		<section
 			aria-labelledby="register-heading"
 			class="w-full rounded border border-outline-variant/30 bg-surface p-stack-lg shadow-sm"
@@ -71,50 +73,45 @@
 
 			<form onsubmit={handleSubmit} class="flex flex-col gap-stack-md">
 				<div class="flex flex-col rounded shadow-sm">
-					<div class="relative">
-						<label class="sr-only" for="username">Usuario</label>
-						<input
-							bind:value={username}
-							id="username"
-							name="username"
-							type="text"
-							placeholder="Usuario"
-							required
-							class="relative block w-full rounded-t-lg border border-outline-variant/50 bg-transparent px-4 py-3 text-sm text-on-surface placeholder-on-surface-variant/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-						/>
-					</div>
-
-					<div class="relative">
-						<label class="sr-only" for="password">Contraseña</label>
-						<input
-							bind:value={password}
-							id="password"
-							name="password"
-							type="password"
-							placeholder="Contraseña"
-							required
-							class="relative block w-full border border-t-0 border-outline-variant/50 bg-transparent px-4 py-3 text-sm text-on-surface placeholder-on-surface-variant/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-						/>
-					</div>
-
-					<div class="relative">
-						<label class="sr-only" for="confirmPassword">Confirmar contraseña</label>
-						<input
-							bind:value={confirmPassword}
-							id="confirmPassword"
-							name="confirmPassword"
-							type="password"
-							placeholder="Confirmar contraseña"
-							required
-							class="relative block w-full rounded-b-lg border border-t-0 border-outline-variant/50 bg-transparent px-4 py-3 text-sm text-on-surface placeholder-on-surface-variant/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-						/>
-					</div>
+					<label class="sr-only" for="username">Usuario</label>
+					<Input
+						position="first"
+						bind:value={username}
+						id="username"
+						name="username"
+						type="text"
+						placeholder="Usuario"
+						required
+						class="border-outline-variant/50 bg-transparent px-4 py-3 text-on-surface placeholder:text-[0.8rem] placeholder:font-light placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-inset focus:ring-2 focus:ring-black/80"
+					/>
+					<label class="sr-only" for="password">Contraseña</label>
+					<Input
+						position="middle"
+						bind:value={password}
+						id="password"
+						name="password"
+						type="password"
+						placeholder="Contraseña"
+						required
+						class="border-outline-variant/50 bg-transparent px-4 py-3 text-on-surface placeholder:text-[0.8rem] placeholder:font-light placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-inset focus:ring-2 focus:ring-black/80"
+					/>
+					<label class="sr-only" for="confirmPassword">Confirmar contraseña</label>
+					<Input
+						position="last"
+						bind:value={confirmPassword}
+						id="confirmPassword"
+						name="confirmPassword"
+						type="password"
+						placeholder="Confirmar contraseña"
+						required
+						class="border-outline-variant/50 bg-transparent px-4 py-3 text-on-surface placeholder:text-[0.8rem] placeholder:font-light placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-inset focus:ring-2 focus:ring-black/80"
+					/>
 				</div>
 
 				<button
 					type="submit"
 					disabled={loading}
-					class="mt-2 w-full rounded bg-primary py-3 px-4 text-sm font-medium text-on-primary transition-colors hover:bg-inverse-surface focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+					class="mt-2 w-full cursor-pointer rounded bg-primary py-3 px-4 text-sm font-medium text-on-primary transition-colors hover:bg-inverse-surface focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
 				>
 					{loading ? 'Creando cuenta...' : 'Crear cuenta'}
 				</button>

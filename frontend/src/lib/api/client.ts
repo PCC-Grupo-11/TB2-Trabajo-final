@@ -4,49 +4,49 @@ import type { ApiError } from '$lib/types/auth';
 const BASE_URL = PUBLIC_API_URL;
 
 export class ApiRequestError extends Error {
-    status: number;
+	status: number;
 
-    constructor(message: string, status: number) {
-        super(message);
-        this.name = 'ApiRequestError';
-        this.status = status;
-    }
+	constructor(message: string, status: number) {
+		super(message);
+		this.name = 'ApiRequestError';
+		this.status = status;
+	}
 }
 
 export function getToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('token');
+	if (typeof window === 'undefined') return null;
+	return localStorage.getItem('token');
 }
 
 export function setToken(token: string): void {
-    localStorage.setItem('token', token);
+	localStorage.setItem('token', token);
 }
 
 export function clearToken(): void {
-    localStorage.removeItem('token');
+	localStorage.removeItem('token');
 }
 
 export async function apiClient<T>(path: string, options?: RequestInit): Promise<T> {
-    const token = getToken();
+	const token = getToken();
 
-    const res = await fetch(`${BASE_URL}${path}`, {
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            ...options?.headers
-        }
-    });
+	const res = await fetch(`${BASE_URL}${path}`, {
+		...options,
+		headers: {
+			'Content-Type': 'application/json',
+			...(token ? { Authorization: `Bearer ${token}` } : {}),
+			...options?.headers
+		}
+	});
 
-    if (!res.ok) {
-        let body: ApiError;
-        try {
-            body = await res.json();
-        } catch {
-            throw new ApiRequestError(res.statusText, res.status);
-        }
-        throw new ApiRequestError(body.error, res.status);
-    }
+	if (!res.ok) {
+		let body: ApiError;
+		try {
+			body = await res.json();
+		} catch {
+			throw new ApiRequestError(res.statusText, res.status);
+		}
+		throw new ApiRequestError(body.error, res.status);
+	}
 
-    return res.json() as Promise<T>;
+	return res.json() as Promise<T>;
 }
