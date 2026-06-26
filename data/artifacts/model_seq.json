@@ -8797,7 +8797,7 @@
   "epochs_trained": 311,
   "early_stopped": true,
   "total_samples": 2904438,
-  "training_time_seconds": 465.4914589,
+  "training_time_seconds": 238.21690360000002,
   "learning_rate": 3,
   "shuffle_seed": 42,
   "validation_split": 0.2,
@@ -8883,5 +8883,5 @@
       73814
     ]
   ],
-  "created_at": "2026-06-25T14:35:34.7560837-05:00"
+  "created_at": "2026-06-25T19:20:06.1968404-05:00"
 }
