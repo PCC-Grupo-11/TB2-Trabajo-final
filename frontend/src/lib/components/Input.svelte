@@ -2,7 +2,7 @@
 	import type { HTMLInputAttributes } from 'svelte/elements';
 
 	const defaultClass =
-		'border-outline-variant/50 bg-transparent px-4 py-3 text-on-surface placeholder:text-[0.8rem] placeholder:font-light placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-inset focus:ring-2 focus:ring-black/80';
+		'border-outline-variant/50 bg-transparent px-4 py-3 text-on-surface placeholder:text-[0.8rem] placeholder:font-light placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-inset focus:ring-2 focus:ring-primary';
 
 	let {
 		position,

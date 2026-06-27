@@ -1,11 +1,12 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import * as authApi from '$lib/api/auth';
+import { getToken, setToken, clearToken } from '$lib/api/client';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 
 function createAuthStore() {
-	const stored = browser ? localStorage.getItem('token') : null;
+	const stored = browser ? getToken() : null;
 	const { subscribe, set } = writable<string | null>(stored);
 
 	return {
@@ -13,7 +14,7 @@ function createAuthStore() {
 
 		async login(username: string, password: string): Promise<void> {
 			const res = await authApi.login(username, password);
-			localStorage.setItem('token', res.token);
+			setToken(res.token);
 			set(res.token);
 		},
 
@@ -23,7 +24,7 @@ function createAuthStore() {
 		},
 
 		logout() {
-			localStorage.removeItem('token');
+			clearToken();
 			set(null);
 			goto(resolve('/login'));
 		},
