@@ -64,7 +64,6 @@
 						type="text"
 						placeholder="Usuario"
 						required
-						class="border-outline-variant/50 bg-transparent px-4 py-3 text-on-surface placeholder:text-[0.8rem] placeholder:font-light placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-inset focus:ring-2 focus:ring-black/80"
 					/>
 					<label class="sr-only" for="password">Contraseña</label>
 					<Input
@@ -75,7 +74,6 @@
 						type="password"
 						placeholder="Contraseña"
 						required
-						class="border-outline-variant/50 bg-transparent px-4 py-3 text-on-surface placeholder:text-[0.8rem] placeholder:font-light placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-inset focus:ring-2 focus:ring-black/80"
 					/>
 				</div>
 

@@ -31,8 +31,7 @@
 
 		try {
 			await auth.register(username, password);
-			success = 'Cuenta creada. Redirigiendo al login...';
-			setTimeout(() => goto(resolve('/login')), 1500);
+			goto(resolve('/dashboard'));
 		} catch (err) {
 			if (err instanceof ApiRequestError) {
 				error = err.message;
@@ -82,7 +81,6 @@
 						type="text"
 						placeholder="Usuario"
 						required
-						class="border-outline-variant/50 bg-transparent px-4 py-3 text-on-surface placeholder:text-[0.8rem] placeholder:font-light placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-inset focus:ring-2 focus:ring-black/80"
 					/>
 					<label class="sr-only" for="password">Contraseña</label>
 					<Input
@@ -93,7 +91,6 @@
 						type="password"
 						placeholder="Contraseña"
 						required
-						class="border-outline-variant/50 bg-transparent px-4 py-3 text-on-surface placeholder:text-[0.8rem] placeholder:font-light placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-inset focus:ring-2 focus:ring-black/80"
 					/>
 					<label class="sr-only" for="confirmPassword">Confirmar contraseña</label>
 					<Input
@@ -104,7 +101,6 @@
 						type="password"
 						placeholder="Confirmar contraseña"
 						required
-						class="border-outline-variant/50 bg-transparent px-4 py-3 text-on-surface placeholder:text-[0.8rem] placeholder:font-light placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-inset focus:ring-2 focus:ring-black/80"
 					/>
 				</div>
 

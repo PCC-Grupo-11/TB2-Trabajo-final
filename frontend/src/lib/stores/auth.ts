@@ -19,6 +19,7 @@ function createAuthStore() {
 
 		async register(username: string, password: string): Promise<void> {
 			await authApi.register(username, password);
+			await this.login(username, password);
 		},
 
 		logout() {
