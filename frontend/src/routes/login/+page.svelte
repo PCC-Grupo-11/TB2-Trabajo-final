@@ -18,16 +18,17 @@
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
 		loading = true;
-		error = '';
 
 		try {
 			await auth.login(username, password);
 			goto(resolve('/dashboard'));
 		} catch (err) {
-			if (err instanceof ApiRequestError) {
-				error = err.message;
+			if (err instanceof ApiRequestError && err.status === 401) {
+				error = 'El usuario y la contraseña no coinciden.';
+			} else if (err instanceof ApiRequestError && err.status === 400) {
+				error = 'Solicitud invalida.';
 			} else {
-				error = 'Error de conexion';
+				error = 'Error de conexion.';
 			}
 		} finally {
 			loading = false;
@@ -82,7 +83,7 @@
 					disabled={loading}
 					class="mt-2 w-full cursor-pointer rounded bg-primary py-3 px-4 text-sm font-medium text-on-primary transition-colors hover:bg-inverse-surface focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
 				>
-					{loading ? 'Ingresando...' : 'Iniciar Sesion'}
+					{loading ? 'Ingresando...' : 'Iniciar sesión'}
 				</button>
 			</form>
 

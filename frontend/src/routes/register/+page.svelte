@@ -11,7 +11,6 @@
 	let confirmPassword = $state('');
 	let loading = $state(false);
 	let error = $state('');
-	let success = $state('');
 
 	onMount(() => {
 		if (auth.isAuthenticated()) goto(resolve('/dashboard'));
@@ -26,17 +25,17 @@
 		}
 
 		loading = true;
-		error = '';
-		success = '';
 
 		try {
 			await auth.register(username, password);
 			goto(resolve('/dashboard'));
 		} catch (err) {
-			if (err instanceof ApiRequestError) {
-				error = err.message;
+			if (err instanceof ApiRequestError && err.status === 409) {
+				error = 'El nombre de usuario ya existe.';
+			} else if (err instanceof ApiRequestError && err.status === 400) {
+				error = 'El usuario y la contraseña son obligatorios.';
 			} else {
-				error = 'Error de conexion';
+				error = 'Error de conexion.';
 			}
 		} finally {
 			loading = false;
@@ -59,14 +58,6 @@
 			{#if error}
 				<div class="mb-stack-md rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
 					{error}
-				</div>
-			{/if}
-
-			{#if success}
-				<div
-					class="mb-stack-md rounded border border-green-200 bg-green-50 p-3 text-sm text-green-700"
-				>
-					{success}
 				</div>
 			{/if}
 
