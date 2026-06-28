@@ -14,7 +14,7 @@
 			container,
 			style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
 			center: [-74.006, 40.7128],
-			zoom: 11
+			zoom: 10
 		});
 
 		map.addControl(new maplibregl.NavigationControl(), 'top-left');

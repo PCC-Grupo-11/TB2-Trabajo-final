@@ -1,22 +1,19 @@
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { predict } from '$lib/api/prediction';
 import type { PredictRequest, PredictionResponse } from '$lib/types/prediction';
 import { ApiRequestError } from '$lib/api/client';
 import { getBorough } from '$lib/utils/borough';
 
-function nycToUnix(dtStr: string): number {
-    const [datePart, timePart] = dtStr.split(/[T ]/);
-    const [year, month, day] = datePart.split('-').map(Number);
-    const [hours, minutes] = timePart.split(':').map(Number);
-    const now = new Date();
-    const isDST = now.toLocaleString('en-US', { timeZone: 'America/New_York', timeZoneName: 'short' }).includes('EDT');
-    return Math.floor(Date.UTC(year, month - 1, day, hours - (isDST ? -4 : -5), minutes) / 1000);
-}
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 class PredictionStore {
     lat = $state<number | null>(null);
     lng = $state<number | null>(null);
     tsLocal = $state(new Date().toLocaleString('sv-SE', { timeZone: 'America/New_York' }).replace(' ', 'T').slice(0, 16));
-    ts = $derived(nycToUnix(this.tsLocal));
+    ts = $derived(dayjs.tz(this.tsLocal, 'America/New_York').unix());
     agency = $state('');
     complaintType = $state('');
     descriptor = $state('');
