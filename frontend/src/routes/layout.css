@@ -13,6 +13,11 @@
 	--color-outline: #76777d;
 	--color-outline-variant: #c6c6cd;
 
+	--color-severity-fast: #10b981;
+	--color-severity-moderate: #f59e0b;
+	--color-severity-slow: #f97316;
+	--color-severity-critical: #ef4444;
+
 	--font-sans: 'Inter', sans-serif;
 
 	--spacing-stack-sm: 0.5rem;
