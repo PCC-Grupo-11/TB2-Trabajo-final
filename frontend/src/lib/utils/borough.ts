@@ -1,4 +1,4 @@
-import boroughs from '$lib/assets/boroughs.geojson';
+import boroughs from '$lib/assets/boroughs.json';
 import { point } from '@turf/helpers';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import type { Feature, Polygon } from 'geojson';

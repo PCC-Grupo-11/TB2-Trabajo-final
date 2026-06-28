@@ -15,7 +15,19 @@ export class ApiRequestError extends Error {
 
 export function getToken(): string | null {
 	if (typeof window === 'undefined') return null;
-	return localStorage.getItem('token');
+	const token = localStorage.getItem('token');
+	if (!token) return null;
+	try {
+		const payload = JSON.parse(atob(token.split('.')[1]));
+		if (payload.exp && payload.exp * 1000 < Date.now()) {
+			clearToken();
+			return null;
+		}
+	} catch {
+		clearToken();
+		return null;
+	}
+	return token;
 }
 
 export function setToken(token: string): void {
