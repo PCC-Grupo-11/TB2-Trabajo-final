@@ -28,8 +28,6 @@ class PredictionStore {
         this.lat = newLat;
         this.lng = newLng;
         this.borough = getBorough(newLat, newLng);
-        this.result = null;
-        this.error = null;
     }
 
     async submitPrediction() {

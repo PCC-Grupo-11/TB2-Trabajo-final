@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { auth } from '$lib/stores/auth';
+	import Dashboard from '$lib/components/dashboard/Dashboard.svelte';
 </script>
 
-<h1>Dashboard</h1>
-<button onclick={() => auth.logout()}>Logout</button>
+<Dashboard />
