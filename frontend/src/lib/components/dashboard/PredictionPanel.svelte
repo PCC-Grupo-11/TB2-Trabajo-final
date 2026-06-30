@@ -83,8 +83,8 @@
 				</div>
 			{:else if prediction.result}
 				{@const res = prediction.result!}
-				<div class="flex-1 px-stack-lg py-stack-md">
-					<div class="mb-stack-md">
+				<div class="flex-1 px-stack-lg pt-5 pb-stack-md">
+					<div>
 						<div class="border-l-[3px] pl-4 {getSeverityBorder(res.class)}">
 							<p
 								class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant"
@@ -105,9 +105,9 @@
 						</div>
 					</div>
 
-					<div class="border-t border-outline-variant/10"></div>
+					<div class="my-5 border-t border-outline-variant/10"></div>
 
-					<ProbabilityDistribution probabilities={res.probabilities} />
+					<ProbabilityDistribution probabilities={res.probabilities} winnerIndex={res.class} />
 				</div>
 
 				<div
