@@ -36,11 +36,11 @@
 	] as const;
 </script>
 
-<div class="flex flex-col gap-3">
+<div class="flex flex-col gap-4">
 	<div>
 		<label
 			for="ts"
-			class="mb-0.5 block text-xs font-medium tracking-wide text-on-surface-variant/70 uppercase"
+			class="mb-0.5 block text-[11px] font-medium tracking-[0.12em] uppercase text-on-surface-variant/70"
 		>
 			Fecha y hora
 		</label>
@@ -48,7 +48,7 @@
 			type="datetime-local"
 			id="ts"
 			bind:value={prediction.tsLocal}
-			class="h-9 w-full border-0 border-b border-outline-variant/50 bg-transparent px-0 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/40 focus:border-on-surface focus:outline-none focus:ring-0"
+			class="h-10 w-full border-0 border-b border-outline-variant/50 bg-transparent px-0 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/40 focus:border-on-surface focus:outline-none focus:ring-0"
 		/>
 	</div>
 
@@ -56,16 +56,16 @@
 		<div>
 			<label
 				for={field.id}
-				class="mb-0.5 block text-xs font-medium tracking-wide text-on-surface-variant/70 uppercase"
+				class="mb-0.5 block text-[11px] font-medium tracking-[0.12em] uppercase text-on-surface-variant/70"
 			>
 				{field.label}
 			</label>
 			<select
 				id={field.id}
 				bind:value={prediction[field.id]}
-				class="h-9 w-full border-0 border-b border-outline-variant/50 bg-transparent px-0 py-2 text-sm text-on-surface focus:border-on-surface focus:outline-none focus:ring-0"
+				class="h-10 w-full border-0 border-b border-outline-variant/50 bg-transparent px-0 py-2 text-sm text-on-surface focus:border-on-surface focus:outline-none focus:ring-0"
 			>
-				<option value="">{field.placeholder}</option>
+				<option value="" disabled selected hidden>{field.placeholder}</option>
 				{#each field.options as opt (opt.value)}
 					<option value={opt.value}>{opt.label}</option>
 				{/each}

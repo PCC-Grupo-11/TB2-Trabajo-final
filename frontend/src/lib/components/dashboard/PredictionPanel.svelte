@@ -43,7 +43,7 @@
 				/>
 			</svg>
 		</div>
-		<h2 class="text-headline-md font-semibold text-on-surface">Iniciar Prediccion</h2>
+		<h2 class="text-headline-md font-semibold text-on-surface">Iniciar Predicción</h2>
 		<p class="max-w-60 text-body-md text-on-surface-variant">
 			Haga clic en cualquier lugar del mapa para seleccionar una coordenada geoespacial y comenzar
 			la configuración de parametros.
@@ -73,13 +73,8 @@
 
 		<div class="min-h-0 flex-1 overflow-y-auto flex flex-col">
 			{#if activeTab === 'config'}
-				<div class="px-stack-lg py-stack-md">
-					{#if prediction.error}
-						<div class="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-							{prediction.error}
-						</div>
-					{/if}
-					<PredictionForm />
+			<div class="px-stack-lg py-stack-md">
+				<PredictionForm />
 				</div>
 			{:else if prediction.result}
 				{@const res = prediction.result!}
