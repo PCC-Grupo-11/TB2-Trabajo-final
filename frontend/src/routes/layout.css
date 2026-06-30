@@ -13,10 +13,10 @@
 	--color-outline: #76777d;
 	--color-outline-variant: #c6c6cd;
 
-	--color-severity-fast: #10b981;
+	/* --color-severity-fast: #10b981;
 	--color-severity-moderate: #f59e0b;
 	--color-severity-slow: #f97316;
-	--color-severity-critical: #ef4444;
+	--color-severity-critical: #ef4444; */
 
 	--color-prob-1: #98e9d5;
 	--color-prob-2: #7fd97d;
@@ -28,12 +28,10 @@
 	--color-prob-8: #aa2e32;
 
 	--color-surface-container-high: #f0f0f0;
-	--color-result-card-bg: #f0f0f0;
 	--color-prob-bar-bg: #f0f0f0;
 
 	--font-sans: 'Inter', sans-serif;
 
-	--spacing-stack-sm: 0.5rem;
 	--spacing-stack-md: 1rem;
 	--spacing-stack-lg: 2rem;
 	--spacing-gutter: 1.5rem;
