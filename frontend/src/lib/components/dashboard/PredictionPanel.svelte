@@ -70,7 +70,7 @@
 			{/each}
 		</div>
 
-		<div class="min-h-0 flex-1 overflow-y-auto">
+		<div class="min-h-0 flex-1 overflow-y-auto flex flex-col">
 			{#if activeTab === 'config'}
 				<div class="px-stack-lg py-stack-md">
 					{#if prediction.error}
@@ -83,7 +83,7 @@
 			{:else if prediction.result}
 				{@const res = prediction.result!}
 				{@const maxProb = Math.max(...res.probabilities)}
-				<div class="px-stack-lg py-stack-md">
+				<div class="flex-1 px-stack-lg py-stack-md">
 					<div
 						class="mb-stack-md rounded border border-outline-variant/30 bg-surface-container-low p-stack-md"
 					>
@@ -127,17 +127,29 @@
 							</div>
 						{/each}
 					</div>
+				</div>
 
-					<div
-						class="mt-stack-md flex items-center gap-stack-sm text-label-sm text-on-surface-variant"
+				<div
+					class="shrink-0 flex items-center justify-end gap-1.5 px-stack-lg py-2 text-xs text-on-surface-variant/40"
+				>
+					<svg
+						class="h-3 w-3"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+						stroke-width="2"
 					>
-						{#if res.cached}
-							<span class="rounded bg-surface-container-high px-2 py-0.5 text-label-sm">Cache</span>
-						{/if}
-						{#if res.latency_ms > 0}
-							<span>{res.latency_ms.toFixed(3)}ms</span>
-						{/if}
-					</div>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+						/>
+					</svg>
+					{#if res.cached}
+						<span>Almacenado en cache</span>
+					{:else}
+						<span>Procesado en {res.latency_ms.toFixed(3)} ms</span>
+					{/if}
 				</div>
 			{:else}
 				<div class="flex items-center justify-center py-stack-lg text-on-surface-variant">

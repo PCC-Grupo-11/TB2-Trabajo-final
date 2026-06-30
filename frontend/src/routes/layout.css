@@ -18,6 +18,19 @@
 	--color-severity-slow: #f97316;
 	--color-severity-critical: #ef4444;
 
+	--color-prob-1: #14b8a6;
+	--color-prob-2: #22c55e;
+	--color-prob-3: #eab308;
+	--color-prob-4: #f59e0b;
+	--color-prob-5: #f97316;
+	--color-prob-6: #ea580c;
+	--color-prob-7: #ef4444;
+	--color-prob-8: #b91c1c;
+
+	--color-surface-container-low: #f0f0f4;
+	--color-surface-container-high: #e2e2e8;
+	--color-surface-container-highest: #d1d1d8;
+
 	--font-sans: 'Inter', sans-serif;
 
 	--spacing-stack-sm: 0.5rem;

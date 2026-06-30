@@ -29,10 +29,17 @@ export const TIME_BUCKETS = [
 ] as const;
 
 export function getSeverityColor(classIndex: number): string {
-	if (classIndex <= 1) return 'bg-severity-fast';
-	if (classIndex <= 3) return 'bg-severity-moderate';
-	if (classIndex <= 5) return 'bg-severity-slow';
-	return 'bg-severity-critical';
+	const colors = [
+		'bg-prob-1',
+		'bg-prob-2',
+		'bg-prob-3',
+		'bg-prob-4',
+		'bg-prob-5',
+		'bg-prob-6',
+		'bg-prob-7',
+		'bg-prob-8'
+	];
+	return colors[classIndex] ?? 'bg-prob-8';
 }
 
 export function getSeverityLabel(confidence: number): string {

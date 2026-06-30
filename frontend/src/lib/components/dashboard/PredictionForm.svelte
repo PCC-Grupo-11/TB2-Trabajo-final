@@ -34,7 +34,6 @@
 			options: LOCATION_TYPES.map((v) => ({ value: v, label: v }))
 		}
 	] as const;
-
 </script>
 
 <div class="flex flex-col gap-3">
@@ -61,16 +60,16 @@
 			>
 				{field.label}
 			</label>
-		<select
-			id={field.id}
-			bind:value={prediction[field.id]}
-			class="h-9 w-full border-0 border-b border-outline-variant/50 bg-transparent px-0 py-2 text-sm text-on-surface focus:border-on-surface focus:outline-none focus:ring-0"
-		>
-			<option value="">{field.placeholder}</option>
-			{#each field.options as opt (opt.value)}
-				<option value={opt.value}>{opt.label}</option>
-			{/each}
-		</select>
+			<select
+				id={field.id}
+				bind:value={prediction[field.id]}
+				class="h-9 w-full border-0 border-b border-outline-variant/50 bg-transparent px-0 py-2 text-sm text-on-surface focus:border-on-surface focus:outline-none focus:ring-0"
+			>
+				<option value="">{field.placeholder}</option>
+				{#each field.options as opt (opt.value)}
+					<option value={opt.value}>{opt.label}</option>
+				{/each}
+			</select>
 		</div>
 	{/each}
 </div>
