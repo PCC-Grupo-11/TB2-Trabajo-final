@@ -85,7 +85,7 @@
 				{@const maxProb = Math.max(...res.probabilities)}
 				<div class="flex-1 px-stack-lg py-stack-md">
 					<div
-						class="mb-stack-md rounded border border-outline-variant/30 bg-surface-container-low p-stack-md"
+						class="mb-stack-md rounded border border-outline-variant/30 bg-result-card-bg p-stack-md"
 					>
 						<p class="text-label-sm font-medium uppercase tracking-wider text-on-surface-variant">
 							Tiempo estimado de resolucion
@@ -113,7 +113,7 @@
 								<span class="w-36 shrink-0 text-right text-label-sm text-on-surface-variant">
 									{TIME_BUCKETS[i] ?? `Clase ${i}`}
 								</span>
-								<div class="h-2 flex-1 overflow-hidden rounded bg-surface-container-high">
+								<div class="h-2 flex-1 overflow-hidden rounded bg-prob-bar-bg">
 									<div
 										class="h-full rounded {getSeverityColor(i)} transition-all"
 										style="width: {pct}%"
@@ -130,7 +130,7 @@
 				</div>
 
 				<div
-					class="shrink-0 flex items-center justify-end gap-1.5 px-stack-lg py-2 text-xs text-on-surface-variant/40"
+					class="shrink-0 flex items-center justify-end gap-1.5 px-stack-lg py-3 border-t border-outline-variant/10 mx-6 text-xs text-on-surface-variant/40"
 				>
 					<svg
 						class="h-3 w-3"

@@ -18,18 +18,18 @@
 	--color-severity-slow: #f97316;
 	--color-severity-critical: #ef4444;
 
-	--color-prob-1: #14b8a6;
-	--color-prob-2: #22c55e;
-	--color-prob-3: #eab308;
-	--color-prob-4: #f59e0b;
-	--color-prob-5: #f97316;
-	--color-prob-6: #ea580c;
-	--color-prob-7: #ef4444;
-	--color-prob-8: #b91c1c;
+	--color-prob-1: #98e9d5;
+	--color-prob-2: #7fd97d;
+	--color-prob-3: #c0e06c;
+	--color-prob-4: #f5cc51;
+	--color-prob-5: #f0a94f;
+	--color-prob-6: #df6d34;
+	--color-prob-7: #cd493b;
+	--color-prob-8: #aa2e32;
 
-	--color-surface-container-low: #f0f0f4;
-	--color-surface-container-high: #e2e2e8;
-	--color-surface-container-highest: #d1d1d8;
+	--color-surface-container-high: #f0f0f0;
+	--color-result-card-bg: #f0f0f0;
+	--color-prob-bar-bg: #f0f0f0;
 
 	--font-sans: 'Inter', sans-serif;
 
