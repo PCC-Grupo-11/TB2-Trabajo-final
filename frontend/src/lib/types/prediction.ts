@@ -28,6 +28,28 @@ export const TIME_BUCKETS = [
 	'> 1 semana'
 ] as const;
 
+export const TIME_BUCKET_SHORT = [
+	'< 30 min',
+	'< 1 h',
+	'< 2.5 h',
+	'< 7 h',
+	'< 1 día',
+	'< 3 días',
+	'< 1 semana',
+	'> 1 semana'
+] as const;
+
+export const TIME_BUCKET_FRIENDLY = [
+	'Menos de 30 minutos',
+	'Menos de 1 hora',
+	'Menos de 2 horas y media',
+	'Menos de 7 horas',
+	'Menos de 1 día',
+	'Menos de 3 días',
+	'Menos de 1 semana',
+	'Más de 1 semana'
+] as const;
+
 export function getSeverityColor(classIndex: number): string {
 	const colors = [
 		'bg-prob-1',
@@ -40,6 +62,20 @@ export function getSeverityColor(classIndex: number): string {
 		'bg-prob-8'
 	];
 	return colors[classIndex] ?? 'bg-prob-8';
+}
+
+export function getSeverityBorder(classIndex: number): string {
+	const colors = [
+		'border-prob-1',
+		'border-prob-2',
+		'border-prob-3',
+		'border-prob-4',
+		'border-prob-5',
+		'border-prob-6',
+		'border-prob-7',
+		'border-prob-8'
+	];
+	return colors[classIndex] ?? 'border-prob-8';
 }
 
 export function getSeverityLabel(confidence: number): string {

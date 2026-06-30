@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { prediction } from '$lib/stores/prediction.svelte';
-	import { TIME_BUCKETS, getSeverityColor, getSeverityLabel } from '$lib/types/prediction';
+	import { TIME_BUCKET_FRIENDLY, getSeverityBorder } from '$lib/types/prediction';
 	import PredictionForm from './PredictionForm.svelte';
+	import ProbabilityDistribution from './ProbabilityDistribution.svelte';
 
 	let activeTab = $state<'config' | 'result'>('config');
 	let hasResult = $derived(prediction.result !== null);
@@ -82,51 +83,31 @@
 				</div>
 			{:else if prediction.result}
 				{@const res = prediction.result!}
-				{@const maxProb = Math.max(...res.probabilities)}
 				<div class="flex-1 px-stack-lg py-stack-md">
-					<div
-						class="mb-stack-md rounded border border-outline-variant/30 bg-result-card-bg p-stack-md"
-					>
-						<p class="text-label-sm font-medium uppercase tracking-wider text-on-surface-variant">
-							Tiempo estimado de resolucion
-						</p>
-						<p class="mt-1 text-headline-lg font-bold text-on-surface">
-							{TIME_BUCKETS[res.class] ?? `Clase ${res.class}`}
-						</p>
-						<p class="mt-1 text-label-md text-on-surface-variant">
-							Confianza: <span class="font-semibold text-on-surface"
-								>{(res.confidence * 100).toFixed(1)}%</span
+					<div class="mb-stack-md">
+						<div class="border-l-[3px] pl-4 {getSeverityBorder(res.class)}">
+							<p
+								class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant"
 							>
-							<span class="ml-1 text-label-sm">({getSeverityLabel(res.confidence)})</span>
-						</p>
+								Tiempo estimado de resolución
+							</p>
+							<p class="mt-2 text-[1.6rem] leading-tight font-extrabold text-on-surface">
+								{TIME_BUCKET_FRIENDLY[res.class] ?? `Clase ${res.class}`}
+							</p>
+							<p
+								class="mt-3 text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant"
+							>
+								Confianza
+							</p>
+							<p class="mt-0.5 text-[1.3rem] leading-tight font-extrabold text-on-surface">
+								{(res.confidence * 100).toFixed(1)}%
+							</p>
+						</div>
 					</div>
 
-					<h4
-						class="mb-2 text-label-sm font-medium uppercase tracking-wider text-on-surface-variant"
-					>
-						Distribucion de probabilidad
-					</h4>
-					<div class="flex flex-col gap-2">
-						{#each res.probabilities as prob, i (i)}
-							{@const pct = maxProb > 0 ? (prob / maxProb) * 100 : 0}
-							<div class="flex items-center gap-3">
-								<span class="w-36 shrink-0 text-right text-label-sm text-on-surface-variant">
-									{TIME_BUCKETS[i] ?? `Clase ${i}`}
-								</span>
-								<div class="h-2 flex-1 overflow-hidden rounded bg-prob-bar-bg">
-									<div
-										class="h-full rounded {getSeverityColor(i)} transition-all"
-										style="width: {pct}%"
-									></div>
-								</div>
-								<span
-									class="w-14 shrink-0 text-right font-mono text-label-sm text-on-surface-variant"
-								>
-									{(prob * 100).toFixed(1)}%
-								</span>
-							</div>
-						{/each}
-					</div>
+					<div class="border-t border-outline-variant/10"></div>
+
+					<ProbabilityDistribution probabilities={res.probabilities} />
 				</div>
 
 				<div
@@ -153,7 +134,7 @@
 				</div>
 			{:else}
 				<div class="flex items-center justify-center py-stack-lg text-on-surface-variant">
-					<p class="text-body-md">Esperando prediccion...</p>
+					<p class="text-body-md">Esperando predicción...</p>
 				</div>
 			{/if}
 		</div>
