@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { auth } from '$lib/stores/auth';
 	import { prediction } from '$lib/stores/prediction.svelte';
+	import { heatmap } from '$lib/stores/heatmap.svelte';
 	import Map from './Map.svelte';
 	import PredictionPanel from './PredictionPanel.svelte';
 	import LogOut from '@lucide/svelte/icons/log-out';
@@ -22,6 +23,21 @@
 	function handleCoordinateSelect(lat: number, lng: number) {
 		prediction.setCoords(lat, lng);
 	}
+
+	$effect(() => {
+		if (activeMode === 'heatmap') {
+			heatmap.enable();
+		} else {
+			heatmap.disable();
+		}
+	});
+
+	$effect(() => {
+		if (!heatmap.enabled) return;
+		const key = `${prediction.ts}|${prediction.agency}|${prediction.complaintType}|${prediction.descriptor}|${prediction.locationType}|${prediction.borough}`;
+		void key;
+		untrack(() => heatmap.refresh());
+	});
 </script>
 
 <div class="flex h-screen flex-col">
@@ -68,13 +84,7 @@
 		</div>
 
 		<aside class="flex w-90 flex-col border-l border-outline-variant/30 bg-surface">
-			{#if activeMode === 'prediction'}
-				<PredictionPanel />
-			{:else}
-				<div class="flex flex-1 items-center justify-center p-stack-lg text-center">
-					<p class="text-body-md text-on-surface-variant">Mapa de Calor - Proximamente</p>
-				</div>
-			{/if}
+			<PredictionPanel />
 		</aside>
 	</div>
 </div>

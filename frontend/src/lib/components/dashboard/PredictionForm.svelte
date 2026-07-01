@@ -1,10 +1,6 @@
 <script lang="ts">
 	import { prediction } from '$lib/stores/prediction.svelte';
-	import {
-		AGENCIES,
-		AGENCY_NAMES,
-		COMPLAINT_TYPES
-	} from '$lib/constants/mappings';
+	import { AGENCIES, AGENCY_NAMES, COMPLAINT_TYPES } from '$lib/constants/mappings';
 	import { COMPLAINT_DESCRIPTORS, DESCRIPTOR_LOCATIONS } from '$lib/constants/combo_mappings';
 
 	let selectedComplaint = $state(prediction.complaintType);
@@ -154,7 +150,11 @@
 			<input
 				type="text"
 				id="descriptor"
-				value={selectedDescriptor === '' ? 'Seleccionar tipo primero' : selectedDescriptor === 'UNKNOWN' ? 'No aplica' : selectedDescriptor}
+				value={selectedDescriptor === ''
+					? 'Seleccionar tipo primero'
+					: selectedDescriptor === 'UNKNOWN'
+						? 'No aplica'
+						: selectedDescriptor}
 				readonly
 				class="h-10 w-full border-0 border-b border-outline-variant/50 bg-transparent px-0 py-2 text-sm text-on-surface-variant/50 cursor-not-allowed"
 			/>
@@ -185,7 +185,13 @@
 			<input
 				type="text"
 				id="locationType"
-				value={selectedLocation === '' ? (selectedComplaint ? 'Seleccionar descriptor primero' : 'Seleccionar tipo primero') : selectedLocation === 'UNKNOWN' ? 'No aplica' : selectedLocation}
+				value={selectedLocation === ''
+					? selectedComplaint
+						? 'Seleccionar descriptor primero'
+						: 'Seleccionar tipo primero'
+					: selectedLocation === 'UNKNOWN'
+						? 'No aplica'
+						: selectedLocation}
 				readonly
 				class="h-10 w-full border-0 border-b border-outline-variant/50 bg-transparent px-0 py-2 text-sm text-on-surface-variant/50 cursor-not-allowed"
 			/>

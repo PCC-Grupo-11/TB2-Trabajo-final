@@ -1,20 +1,42 @@
 import { prediction } from '$lib/stores/prediction.svelte';
 import { bulkPredict } from '$lib/api/bulk-prediction';
-import { zoomToResolution, getCellsForViewport, cellToFeature, emptyFeatureCollection } from '$lib/utils/h3';
+import { SvelteMap } from 'svelte/reactivity';
+import {
+	zoomToResolution,
+	getCellsForViewport,
+	cellToFeature,
+	emptyFeatureCollection
+} from '$lib/utils/h3';
 import type { HexPrediction, HeatmapViewport } from '$lib/types/heatmap';
 
 class HeatmapStore {
 	enabled = $state(false);
 	resolution = $state(7);
 	viewport = $state<HeatmapViewport | null>(null);
-	cache = $state<Map<string, HexPrediction>>(new Map());
+	cache = new SvelteMap<string, HexPrediction>();
 	loading = $state(false);
+	error = $state<string | null>(null);
 
 	private abortController: AbortController | null = null;
 
 	updateViewport(v: HeatmapViewport, zoom: number) {
 		this.viewport = v;
 		this.resolution = zoomToResolution(zoom);
+		this.fetchMissing();
+	}
+
+	enable() {
+		this.enabled = true;
+		this.fetchMissing();
+	}
+
+	disable() {
+		this.enabled = false;
+		this.abortController?.abort();
+	}
+
+	refresh() {
+		this.clearCache();
 		this.fetchMissing();
 	}
 
@@ -39,8 +61,13 @@ class HeatmapStore {
 		this.cache.clear();
 	}
 
+	hasValidParams(): boolean {
+		return prediction.agency !== '' && prediction.complaintType !== '';
+	}
+
 	fetchMissing() {
 		if (!this.enabled || !this.viewport) return;
+		if (!this.hasValidParams()) return;
 
 		const cells = getCellsForViewport(
 			this.viewport.north,
@@ -56,6 +83,7 @@ class HeatmapStore {
 		this.abortController?.abort();
 		this.abortController = new AbortController();
 		this.loading = true;
+		this.error = null;
 
 		this.doFetch(missing, this.abortController.signal);
 	}
@@ -80,6 +108,7 @@ class HeatmapStore {
 			}
 		} catch (err) {
 			if (err instanceof Error && err.name === 'AbortError') return;
+			this.error = err instanceof Error ? err.message : 'Error al obtener predicciones.';
 		} finally {
 			this.loading = false;
 		}
