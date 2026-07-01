@@ -9,6 +9,12 @@ import {
 } from '$lib/utils/h3';
 import type { HexPrediction, HeatmapViewport } from '$lib/types/heatmap';
 
+// Safety cap: at very low zoom the viewport can cover a huge area and
+// polygonToCells would produce tens of thousands of cells, freezing the tab
+// and hammering the backend. Above this we skip fetching/rendering and ask
+// the user to zoom in.
+const MAX_CELLS = 2000;
+
 class HeatmapStore {
 	enabled = $state(false);
 	resolution = $state(7);
@@ -49,6 +55,7 @@ class HeatmapStore {
 			this.viewport.west,
 			this.resolution
 		);
+		if (cells.length > MAX_CELLS) return emptyFeatureCollection();
 		const features: GeoJSON.Feature[] = [];
 		for (const cell of cells) {
 			const pred = this.cache.get(cell);
@@ -76,6 +83,10 @@ class HeatmapStore {
 			this.viewport.west,
 			this.resolution
 		);
+		if (cells.length > MAX_CELLS) {
+			this.error = 'Acerca el mapa para ver el mapa de calor.';
+			return;
+		}
 		const missing = cells.filter((c) => !this.cache.has(c));
 
 		if (missing.length === 0) return;

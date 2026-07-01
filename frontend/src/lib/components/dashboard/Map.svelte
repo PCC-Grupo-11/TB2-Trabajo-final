@@ -13,7 +13,7 @@
 	let heatmapLayerAdded = $state(false);
 
 	function addHeatmapLayer() {
-		if (heatmapLayerAdded || !map) return;
+		if (heatmapLayerAdded || !map || !map.isStyleLoaded()) return;
 		map.addSource('heatmap-source', {
 			type: 'geojson',
 			data: { type: 'FeatureCollection', features: [] }
@@ -94,8 +94,12 @@
 			emitViewport();
 		});
 
+		// Keep the viewport in sync even while the heatmap is disabled. Otherwise,
+		// panning/zooming in prediction mode leaves a stale viewport, and enabling
+		// the heatmap fetches hexes for the old area (heatmap looks empty).
+		// updateViewport() no-ops the fetch while disabled, so this stays cheap.
 		map.on('moveend', () => {
-			if (heatmap.enabled) emitViewport();
+			emitViewport();
 		});
 	});
 
@@ -103,6 +107,9 @@
 		if (!map) return;
 		if (heatmap.enabled) {
 			addHeatmapLayer();
+			// Fetch for the bounds the user is currently looking at right away;
+			// without this the layer stays empty until the next map movement.
+			emitViewport();
 		} else {
 			removeHeatmapLayer();
 		}
