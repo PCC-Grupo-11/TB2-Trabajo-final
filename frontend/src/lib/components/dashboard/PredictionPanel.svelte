@@ -3,6 +3,7 @@
 	import { TIME_BUCKET_FRIENDLY, getSeverityBorder } from '$lib/types/prediction';
 	import PredictionForm from './PredictionForm.svelte';
 	import ProbabilityDistribution from './ProbabilityDistribution.svelte';
+	import Clock from '@lucide/svelte/icons/clock';
 
 	let activeTab = $state<'config' | 'result'>('config');
 	let hasResult = $derived(prediction.result !== null);
@@ -19,38 +20,7 @@
 	});
 </script>
 
-{#if prediction.lat === null}
-	<div
-		class="flex flex-1 flex-col items-center justify-center gap-stack-md px-stack-lg text-center"
-	>
-		<div class="flex h-16 w-16 items-center justify-center rounded-full bg-surface-container-high">
-			<svg
-				class="h-8 w-8 text-on-surface-variant"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke="currentColor"
-				stroke-width="1.5"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
-				/>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
-				/>
-			</svg>
-		</div>
-		<h2 class="text-headline-md font-semibold text-on-surface">Iniciar Predicción</h2>
-		<p class="max-w-60 text-body-md text-on-surface-variant">
-			Haga clic en cualquier lugar del mapa para seleccionar una coordenada geoespacial y comenzar
-			la configuración de parametros.
-		</p>
-	</div>
-{:else}
-	<div class="flex flex-1 flex-col">
+<div class="flex flex-1 flex-col">
 		<div class="flex shrink-0 border-b border-outline-variant/30">
 			{#each [{ id: 'config', label: 'Configuración' }, { id: 'result', label: 'Resultado' }] as tab (tab.id)}
 				{@const locked = tab.id === 'result' && !hasResult}
@@ -108,19 +78,7 @@
 				<div
 					class="shrink-0 flex items-center justify-end gap-1.5 px-stack-lg py-3 border-t border-outline-variant/10 mx-6 text-xs text-on-surface-variant/40"
 				>
-					<svg
-						class="h-3 w-3"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-						/>
-					</svg>
+					<Clock size={12} strokeWidth={2} />
 					{#if res.cached}
 						<span>Almacenado en cache</span>
 					{:else}
@@ -134,4 +92,3 @@
 			{/if}
 		</div>
 	</div>
-{/if}

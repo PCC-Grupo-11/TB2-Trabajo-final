@@ -6,6 +6,7 @@
 	import { prediction } from '$lib/stores/prediction.svelte';
 	import Map from './Map.svelte';
 	import PredictionPanel from './PredictionPanel.svelte';
+	import LogOut from '@lucide/svelte/icons/log-out';
 
 	function formatCoord(val: number, type: 'lat' | 'lng'): string {
 		const dir = type === 'lat' ? (val >= 0 ? 'N' : 'S') : val >= 0 ? 'E' : 'W';
@@ -25,13 +26,14 @@
 
 <div class="flex h-screen flex-col">
 	<nav
-		class="flex h-14 shrink-0 items-center border-b border-outline-variant/30 bg-surface px-gutter backdrop-blur-md"
+		class="grid h-12 shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-outline-variant/30 bg-surface px-gutter backdrop-blur-md"
 	>
-		<div class="flex flex-1 items-center justify-center gap-stack-lg">
+		<div></div>
+		<div class="flex items-center gap-stack-lg">
 			{#each [{ mode: 'prediction', label: 'Predicción' }, { mode: 'heatmap', label: 'Mapa de calor' }] as const as tab (tab.mode)}
 				<button
 					onclick={() => (activeMode = tab.mode)}
-					class="cursor-pointer border-b-2 px-1 py-4 text-label-md font-medium transition-colors
+					class="cursor-pointer border-b-2 px-1 py-2 text-label-md font-medium transition-colors
 						{activeMode === tab.mode
 						? 'border-on-surface text-on-surface'
 						: 'border-transparent text-on-surface-variant hover:text-on-surface'}"
@@ -40,25 +42,13 @@
 				</button>
 			{/each}
 		</div>
-		<div class="flex items-center">
+		<div class="flex justify-end">
 			<button
 				onclick={() => auth.logout()}
-				class="flex cursor-pointer items-center gap-2 text-label-md text-on-surface-variant transition-colors hover:text-on-surface"
+				title="Cerrar sesión"
+				class="flex cursor-pointer items-center text-on-surface-variant transition-colors hover:text-on-surface"
 			>
-				<svg
-					class="h-5 w-5"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					stroke-width="1.5"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-					/>
-				</svg>
-				Cerrar sesión
+				<LogOut size={20} strokeWidth={1.5} />
 			</button>
 		</div>
 	</nav>
