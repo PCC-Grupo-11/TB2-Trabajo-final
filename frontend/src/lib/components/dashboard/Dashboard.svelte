@@ -6,6 +6,7 @@
 	import { prediction } from '$lib/stores/prediction.svelte';
 	import { heatmap } from '$lib/stores/heatmap.svelte';
 	import Map from './Map.svelte';
+	import type { MapAPI } from './Map.svelte';
 	import PredictionPanel from './PredictionPanel.svelte';
 	import LogOut from '@lucide/svelte/icons/log-out';
 
@@ -15,6 +16,7 @@
 	}
 
 	let activeMode = $state<'prediction' | 'heatmap'>('prediction');
+	let mapAPI: MapAPI | null = $state(null);
 
 	onMount(() => {
 		if (!auth.isAuthenticated()) goto(resolve('/login'));
@@ -24,18 +26,28 @@
 		prediction.setCoords(lat, lng);
 	}
 
-	$effect(() => {
-		if (activeMode === 'heatmap') {
+	function handleTabClick(mode: 'prediction' | 'heatmap') {
+		activeMode = mode;
+		if (mode === 'heatmap') {
 			heatmap.enable();
+			mapAPI?.addHeatmapLayer();
+			mapAPI?.emitViewport();
 		} else {
 			heatmap.disable();
+			mapAPI?.removeHeatmapLayer();
 		}
-	});
+	}
 
 	$effect(() => {
 		if (!heatmap.enabled) return;
-		const key = `${prediction.ts}|${prediction.agency}|${prediction.complaintType}|${prediction.descriptor}|${prediction.locationType}|${prediction.borough}`;
-		void key;
+		// Track prediction params so cache is invalidated when they change.
+		// untrack() prevents re-triggering when refresh() writes to cache/loading.
+		void prediction.ts;
+		void prediction.agency;
+		void prediction.complaintType;
+		void prediction.descriptor;
+		void prediction.locationType;
+		void prediction.borough;
 		untrack(() => heatmap.refresh());
 	});
 </script>
@@ -48,7 +60,7 @@
 		<div class="flex items-center gap-stack-lg">
 			{#each [{ mode: 'prediction', label: 'Predicción' }, { mode: 'heatmap', label: 'Mapa de calor' }] as const as tab (tab.mode)}
 				<button
-					onclick={() => (activeMode = tab.mode)}
+					onclick={() => handleTabClick(tab.mode)}
 					class="cursor-pointer border-b-2 px-1 py-2 text-label-md font-medium transition-colors
 						{activeMode === tab.mode
 						? 'border-on-surface text-on-surface'
@@ -71,7 +83,7 @@
 
 	<div class="flex flex-1 overflow-hidden">
 		<div class="flex-1 relative">
-			<Map onCoordinateSelect={handleCoordinateSelect} />
+			<Map onCoordinateSelect={handleCoordinateSelect} onMapReady={(api) => (mapAPI = api)} />
 			{#if prediction.lat !== null}
 				<div
 					class="absolute top-4 right-4 rounded-lg border border-outline-variant/30 bg-surface/80 px-3 py-2 shadow-sm backdrop-blur-sm"

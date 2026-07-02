@@ -33,7 +33,6 @@ class HeatmapStore {
 
 	enable() {
 		this.enabled = true;
-		this.fetchMissing();
 	}
 
 	disable() {

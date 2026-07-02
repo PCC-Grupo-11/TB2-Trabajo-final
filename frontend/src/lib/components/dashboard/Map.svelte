@@ -5,7 +5,19 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { heatmap } from '$lib/stores/heatmap.svelte';
 
-	let { onCoordinateSelect }: { onCoordinateSelect: (lat: number, lng: number) => void } = $props();
+	export type MapAPI = {
+		addHeatmapLayer: () => void;
+		removeHeatmapLayer: () => void;
+		emitViewport: () => void;
+	};
+
+	let {
+		onCoordinateSelect,
+		onMapReady
+	}: {
+		onCoordinateSelect: (lat: number, lng: number) => void;
+		onMapReady?: (api: MapAPI) => void;
+	} = $props();
 
 	let container: HTMLDivElement;
 	let map: maplibregl.Map;
@@ -92,6 +104,7 @@
 		map.on('load', () => {
 			if (heatmap.enabled) addHeatmapLayer();
 			emitViewport();
+			onMapReady?.({ addHeatmapLayer, removeHeatmapLayer, emitViewport });
 		});
 
 		// Keep the viewport in sync even while the heatmap is disabled. Otherwise,
@@ -101,18 +114,6 @@
 		map.on('moveend', () => {
 			emitViewport();
 		});
-	});
-
-	$effect(() => {
-		if (!map) return;
-		if (heatmap.enabled) {
-			addHeatmapLayer();
-			// Fetch for the bounds the user is currently looking at right away;
-			// without this the layer stays empty until the next map movement.
-			emitViewport();
-		} else {
-			removeHeatmapLayer();
-		}
 	});
 
 	$effect(() => {
