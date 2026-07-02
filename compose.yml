@@ -84,8 +84,6 @@ services:
     frontend:
         image: ghcr.io/pcc-grupo-11/tb2-trabajo-final/frontend:latest
 
-        read_only: true
-
         restart: unless-stopped
 
         ports:

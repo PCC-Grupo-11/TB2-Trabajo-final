@@ -93,8 +93,6 @@ services:
             context: .
             target: frontend
 
-        read_only: true
-
         restart: unless-stopped
 
         ports:
