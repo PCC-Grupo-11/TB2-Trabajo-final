@@ -102,8 +102,12 @@ class HeatmapStore {
 
 	private async doFetch(hexes: string[], signal: AbortSignal) {
 		try {
-			const hexWithBorough = hexes.map((h) => ({ hex: h, borough: hexToBorough(h) }));
-			const config = { ...prediction.heatmapParams, hexes: hexWithBorough };
+			const grouped: Record<string, string[]> = {};
+			for (const hex of hexes) {
+				const b = hexToBorough(hex);
+				(grouped[b] ??= []).push(hex);
+			}
+			const config = { ...prediction.heatmapParams, hexes: grouped };
 			console.log('[heatmap] bulk request', config);
 			const response = await bulkPredict(config, signal);
 

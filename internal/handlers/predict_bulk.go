@@ -32,38 +32,47 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	parentResults := make(map[string]protocol.HexPrediction, len(req.Hexes))
+	totalHexes := 0
+	for _, hexes := range req.Hexes {
+		totalHexes += len(hexes)
+	}
+
+	parentResults := make(map[string]protocol.HexPrediction, totalHexes)
 	var missingHexes []string
-	boroughs := make(map[string]string, len(req.Hexes))
+	boroughs := make(map[string]string, totalHexes)
 
 	if h.Cache != nil {
-		for _, hex := range req.Hexes {
-			key := parentCacheKey(hex.Hex, hex.Borough, &req)
-			boroughs[hex.Hex] = hex.Borough
-			data, err := h.Cache.GetPrediction(r.Context(), key)
-			if err != nil {
-				missingHexes = append(missingHexes, hex.Hex)
-				continue
+		for borough, hexes := range req.Hexes {
+			for _, hex := range hexes {
+				key := parentCacheKey(hex, borough, &req)
+				boroughs[hex] = borough
+				data, err := h.Cache.GetPrediction(r.Context(), key)
+				if err != nil {
+					missingHexes = append(missingHexes, hex)
+					continue
+				}
+				var hp protocol.HexPrediction
+				if err := json.Unmarshal(data, &hp); err != nil {
+					logger.Warn("parent cache data corrupted", "parent_hex", hex, "error", err)
+					missingHexes = append(missingHexes, hex)
+					continue
+				}
+				parentResults[hex] = hp
 			}
-			var hp protocol.HexPrediction
-			if err := json.Unmarshal(data, &hp); err != nil {
-				logger.Warn("parent cache data corrupted", "parent_hex", hex.Hex, "error", err)
-				missingHexes = append(missingHexes, hex.Hex)
-				continue
-			}
-			parentResults[hex.Hex] = hp
 		}
 	} else {
-		for _, hex := range req.Hexes {
-			missingHexes = append(missingHexes, hex.Hex)
-			boroughs[hex.Hex] = hex.Borough
+		for borough, hexes := range req.Hexes {
+			for _, hex := range hexes {
+				missingHexes = append(missingHexes, hex)
+				boroughs[hex] = borough
+			}
 		}
 	}
 
 	// 7 = avg children per hex at res+1; if VectorizeBulk resolution changes, update this
 	parentHits := int64(len(parentResults)) * 7
 
-	if len(parentResults) == len(req.Hexes) {
+	if len(parentResults) == totalHexes {
 		if h.Cache != nil {
 			h.Cache.IncrBy(r.Context(), "cache_hits", parentHits)
 		}
