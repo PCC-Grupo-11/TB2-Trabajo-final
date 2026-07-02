@@ -41,6 +41,7 @@ class HeatmapStore {
 	}
 
 	refresh() {
+		console.log('[heatmap] refresh — clearing cache');
 		this.clearCache();
 		this.fetchMissing();
 	}
@@ -100,7 +101,9 @@ class HeatmapStore {
 
 	private async doFetch(hexes: string[], signal: AbortSignal) {
 		try {
-			const response = await bulkPredict({ ...prediction.heatmapParams, h3_hexes: hexes }, signal);
+			const config = { ...prediction.heatmapParams, h3_hexes: hexes };
+			console.log('[heatmap] bulk request', config);
+			const response = await bulkPredict(config, signal);
 
 			for (const hex of response.results) {
 				this.cache.set(hex.hex, hex);

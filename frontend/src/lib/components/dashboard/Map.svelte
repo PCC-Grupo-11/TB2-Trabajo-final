@@ -55,7 +55,7 @@
 					'#aa2e32',
 					'#aa2e32'
 				],
-				'fill-opacity': 0.7,
+				'fill-opacity': 0.4,
 				'fill-outline-color': 'rgba(0,0,0,0.15)'
 			}
 		});

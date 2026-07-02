@@ -24,12 +24,13 @@ export function getCellsForViewport(
 	west: number,
 	resolution: number
 ): string[] {
+	const pad = 0.02;
 	const bbox: number[][] = [
-		[north, west],
-		[north, east],
-		[south, east],
-		[south, west],
-		[north, west]
+		[north + pad, west - pad],
+		[north + pad, east + pad],
+		[south - pad, east + pad],
+		[south - pad, west - pad],
+		[north + pad, west - pad]
 	];
 	return polygonToCells(bbox, resolution, false);
 }
