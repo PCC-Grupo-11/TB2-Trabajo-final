@@ -25,7 +25,7 @@ export function getCellsForViewport(
 	west: number,
 	resolution: number
 ): string[] {
-	const pad = 0.02;
+	const pad = 0.04;
 	const bbox: number[][] = [
 		[north + pad, west - pad],
 		[north + pad, east + pad],

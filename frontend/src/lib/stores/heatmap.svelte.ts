@@ -42,7 +42,6 @@ class HeatmapStore {
 	}
 
 	refresh() {
-		console.log('[heatmap] refresh — clearing cache');
 		this.clearCache();
 		this.fetchMissing();
 	}
@@ -108,7 +107,6 @@ class HeatmapStore {
 				(grouped[b] ??= []).push(hex);
 			}
 			const config = { ...prediction.heatmapParams, hexes: grouped };
-			console.log('[heatmap] bulk request', config);
 			const response = await bulkPredict(config, signal);
 
 			for (const hex of response.results) {
