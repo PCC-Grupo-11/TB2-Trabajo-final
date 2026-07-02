@@ -25,6 +25,15 @@ class PredictionStore {
 	locationType = $state('');
 	borough = $state('');
 
+	heatmapParams = $derived({
+		ts: this.ts,
+		agency: this.agency,
+		complaint_type: this.complaintType,
+		descriptor: this.descriptor,
+		location_type: this.locationType,
+		borough: this.borough
+	});
+
 	result = $state<PredictionResponse | null>(null);
 	loading = $state(false);
 	error = $state<string | null>(null);

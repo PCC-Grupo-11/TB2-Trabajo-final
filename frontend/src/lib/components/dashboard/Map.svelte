@@ -6,9 +6,8 @@
 	import { heatmap } from '$lib/stores/heatmap.svelte';
 
 	export type MapAPI = {
-		addHeatmapLayer: () => void;
-		removeHeatmapLayer: () => void;
-		emitViewport: () => void;
+		enableHeatmap: () => void;
+		disableHeatmap: () => void;
 	};
 
 	let {
@@ -84,6 +83,15 @@
 		);
 	}
 
+	function enableHeatmap() {
+		addHeatmapLayer();
+		emitViewport();
+	}
+
+	function disableHeatmap() {
+		removeHeatmapLayer();
+	}
+
 	onMount(() => {
 		map = new maplibregl.Map({
 			container,
@@ -102,9 +110,9 @@
 		});
 
 		map.on('load', () => {
-			if (heatmap.enabled) addHeatmapLayer();
-			emitViewport();
-			onMapReady?.({ addHeatmapLayer, removeHeatmapLayer, emitViewport });
+			if (heatmap.enabled) enableHeatmap();
+			else emitViewport();
+			onMapReady?.({ enableHeatmap, disableHeatmap });
 		});
 
 		// Keep the viewport in sync even while the heatmap is disabled. Otherwise,

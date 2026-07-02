@@ -100,18 +100,7 @@ class HeatmapStore {
 
 	private async doFetch(hexes: string[], signal: AbortSignal) {
 		try {
-			const response = await bulkPredict(
-				{
-					ts: prediction.ts,
-					agency: prediction.agency,
-					complaint_type: prediction.complaintType,
-					descriptor: prediction.descriptor,
-					location_type: prediction.locationType,
-					borough: prediction.borough,
-					h3_hexes: hexes
-				},
-				signal
-			);
+			const response = await bulkPredict({ ...prediction.heatmapParams, h3_hexes: hexes }, signal);
 
 			for (const hex of response.results) {
 				this.cache.set(hex.hex, hex);

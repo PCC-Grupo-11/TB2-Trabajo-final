@@ -30,11 +30,10 @@
 		activeMode = mode;
 		if (mode === 'heatmap') {
 			heatmap.enable();
-			mapAPI?.addHeatmapLayer();
-			mapAPI?.emitViewport();
+			mapAPI?.enableHeatmap();
 		} else {
 			heatmap.disable();
-			mapAPI?.removeHeatmapLayer();
+			mapAPI?.disableHeatmap();
 		}
 	}
 
@@ -42,12 +41,7 @@
 		if (!heatmap.enabled) return;
 		// Track prediction params so cache is invalidated when they change.
 		// untrack() prevents re-triggering when refresh() writes to cache/loading.
-		void prediction.ts;
-		void prediction.agency;
-		void prediction.complaintType;
-		void prediction.descriptor;
-		void prediction.locationType;
-		void prediction.borough;
+		void prediction.heatmapParams;
 		untrack(() => heatmap.refresh());
 	});
 </script>
