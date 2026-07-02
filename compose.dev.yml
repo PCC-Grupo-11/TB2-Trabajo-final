@@ -71,9 +71,6 @@ services:
 
         restart: unless-stopped
 
-        ports:
-            - "8080:8080"
-
         environment:
             API_PORT: 8080
             MONGO_URI: mongodb://admin:admin@mongo:27017/admin
@@ -90,6 +87,21 @@ services:
                 condition: service_started
             inference-2:
                 condition: service_started
+
+    frontend:
+        build:
+            context: .
+            target: frontend
+
+        read_only: true
+
+        restart: unless-stopped
+
+        ports:
+            - "80:80"
+
+        depends_on:
+            - api
 
 volumes:
     mongo_data:

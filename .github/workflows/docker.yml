@@ -3,8 +3,6 @@ name: Publish docker images
 on:
   push:
     branches: [main, develop]
-    paths-ignore:
-      - "frontend/**"
 
 permissions:
   contents: read
@@ -21,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [api, inference]
+        app: [api, inference, frontend]
 
     steps:
       - name: Checkout repository
@@ -69,7 +67,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [api, inference]
+        app: [api, inference, frontend]
 
     steps:
       - name: Checkout repository
@@ -119,7 +117,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [api, inference]
+        app: [api, inference, frontend]
 
     steps:
       - name: Log in to GHCR
