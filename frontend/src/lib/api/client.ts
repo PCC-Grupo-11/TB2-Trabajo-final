@@ -1,7 +1,6 @@
-import { PUBLIC_API_URL } from '$env/static/public';
 import type { ApiError } from '$lib/types/auth';
 
-const BASE_URL = PUBLIC_API_URL;
+const BASE_URL = '/api/v1';
 
 export class ApiRequestError extends Error {
 	status: number;
