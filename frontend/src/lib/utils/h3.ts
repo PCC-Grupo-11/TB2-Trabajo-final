@@ -1,4 +1,5 @@
-import { polygonToCells, cellToBoundary } from 'h3-js';
+import { polygonToCells, cellToBoundary, cellToLatLng } from 'h3-js';
+import { getBorough } from '$lib/utils/borough';
 import type { HexPrediction } from '$lib/types/heatmap';
 
 const ZOOM_RESOLUTIONS: [number, number][] = [
@@ -49,6 +50,11 @@ export function cellToFeature(cell: string, prediction: HexPrediction): GeoJSON.
 			coordinates: [boundary]
 		}
 	};
+}
+
+export function hexToBorough(hex: string): string {
+	const [lat, lng] = cellToLatLng(hex);
+	return getBorough(lat, lng);
 }
 
 export function emptyFeatureCollection(): GeoJSON.FeatureCollection {

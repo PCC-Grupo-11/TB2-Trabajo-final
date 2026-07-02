@@ -30,8 +30,7 @@ class PredictionStore {
 		agency: this.agency,
 		complaint_type: this.complaintType,
 		descriptor: this.descriptor,
-		location_type: this.locationType,
-		borough: this.borough
+		location_type: this.locationType
 	});
 
 	result = $state<PredictionResponse | null>(null);

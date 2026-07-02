@@ -11,14 +11,18 @@ type PredictRequest struct {
 	Borough       string  `json:"borough"`
 }
 
+type HexWithBorough struct {
+	Hex     string `json:"hex"`
+	Borough string `json:"borough"`
+}
+
 type BulkPredictRequest struct {
-	Timestamp     int64    `json:"ts"`
-	Agency        string   `json:"agency"`
-	ComplaintType string   `json:"complaint_type"`
-	Descriptor    string   `json:"descriptor"`
-	LocationType  string   `json:"location_type"`
-	Borough       string   `json:"borough"`
-	H3Hexes       []string `json:"h3_hexes"`
+	Timestamp     int64            `json:"ts"`
+	Agency        string           `json:"agency"`
+	ComplaintType string           `json:"complaint_type"`
+	Descriptor    string           `json:"descriptor"`
+	LocationType  string           `json:"location_type"`
+	Hexes         []HexWithBorough `json:"hexes"`
 }
 
 type RegisterRequest struct {

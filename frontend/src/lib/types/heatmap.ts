@@ -4,8 +4,7 @@ export interface BulkPredictRequest {
 	complaint_type: string;
 	descriptor: string;
 	location_type: string;
-	borough: string;
-	h3_hexes: string[];
+	hexes: { hex: string; borough: string }[];
 }
 
 export interface HexPrediction {

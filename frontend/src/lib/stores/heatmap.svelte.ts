@@ -5,7 +5,8 @@ import {
 	zoomToResolution,
 	getCellsForViewport,
 	cellToFeature,
-	emptyFeatureCollection
+	emptyFeatureCollection,
+	hexToBorough
 } from '$lib/utils/h3';
 import type { HexPrediction, HeatmapViewport } from '$lib/types/heatmap';
 
@@ -101,7 +102,8 @@ class HeatmapStore {
 
 	private async doFetch(hexes: string[], signal: AbortSignal) {
 		try {
-			const config = { ...prediction.heatmapParams, h3_hexes: hexes };
+			const hexWithBorough = hexes.map((h) => ({ hex: h, borough: hexToBorough(h) }));
+			const config = { ...prediction.heatmapParams, hexes: hexWithBorough };
 			console.log('[heatmap] bulk request', config);
 			const response = await bulkPredict(config, signal);
 

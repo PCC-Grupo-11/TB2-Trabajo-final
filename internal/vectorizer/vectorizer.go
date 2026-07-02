@@ -35,9 +35,14 @@ func New(mappingsDir string) (*Vectorizer, error) {
 func (v *Vectorizer) Vectorize(input *protocol.PredictRequest) (protocol.PredictRecord, error) {
 	if err := v.validateCategoricals(
 		&input.Agency, &input.ComplaintType,
-		&input.Descriptor, &input.LocationType, &input.Borough,
+		&input.Descriptor, &input.LocationType,
 	); err != nil {
 		return protocol.PredictRecord{}, err
+	}
+	if _, ok := v.loader.BoroughMap[input.Borough]; !ok {
+		if f := catchAll(v.loader.BoroughMap); f != "" {
+			input.Borough = f
+		}
 	}
 
 	t := time.Unix(input.Timestamp, 0).In(v.loc)
@@ -61,10 +66,10 @@ type HexRecord struct {
 	Record    protocol.PredictRecord
 }
 
-func (v *Vectorizer) VectorizeBulk(categories *protocol.BulkPredictRequest) ([]HexRecord, error) {
+func (v *Vectorizer) VectorizeBulk(hexes []string, boroughs map[string]string, categories *protocol.BulkPredictRequest) ([]HexRecord, error) {
 	if err := v.validateCategoricals(
 		&categories.Agency, &categories.ComplaintType,
-		&categories.Descriptor, &categories.LocationType, &categories.Borough,
+		&categories.Descriptor, &categories.LocationType,
 	); err != nil {
 		return nil, err
 	}
@@ -73,7 +78,14 @@ func (v *Vectorizer) VectorizeBulk(categories *protocol.BulkPredictRequest) ([]H
 
 	var results []HexRecord
 
-	for _, parentHex := range categories.H3Hexes {
+	for _, parentHex := range hexes {
+		borough := boroughs[parentHex]
+		if _, ok := v.loader.BoroughMap[borough]; !ok {
+			if f := catchAll(v.loader.BoroughMap); f != "" {
+				borough = f
+			}
+		}
+
 		cell := h3.CellFromString(parentHex)
 		if !cell.IsValid() {
 			return nil, ValidationError(fmt.Sprintf("invalid hex %q", parentHex))
@@ -99,7 +111,7 @@ func (v *Vectorizer) VectorizeBulk(categories *protocol.BulkPredictRequest) ([]H
 				categories.ComplaintType,
 				categories.Descriptor,
 				categories.LocationType,
-				categories.Borough,
+				borough,
 				v.loader,
 			)
 
@@ -113,7 +125,7 @@ func (v *Vectorizer) VectorizeBulk(categories *protocol.BulkPredictRequest) ([]H
 	return results, nil
 }
 
-func (v *Vectorizer) validateCategoricals(agency, complaint, descriptor, location, borough *string) error {
+func (v *Vectorizer) validateCategoricals(agency, complaint, descriptor, location *string) error {
 	if _, ok := v.loader.AgencyMap[*agency]; !ok {
 		return ValidationError(fmt.Sprintf("unknown agency: %q", *agency))
 	}
@@ -128,11 +140,6 @@ func (v *Vectorizer) validateCategoricals(agency, complaint, descriptor, locatio
 	if _, ok := v.loader.LocationMap[*location]; !ok {
 		if f := catchAll(v.loader.LocationMap); f != "" {
 			*location = f
-		}
-	}
-	if _, ok := v.loader.BoroughMap[*borough]; !ok {
-		if f := catchAll(v.loader.BoroughMap); f != "" {
-			*borough = f
 		}
 	}
 	return nil
