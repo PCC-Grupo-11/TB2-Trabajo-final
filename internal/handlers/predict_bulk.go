@@ -11,7 +11,7 @@ import (
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/vectorizer"
 )
 
-func parentCacheKey(parentHex string, req *protocol.BulkPredictRequest) string {
+func parentCacheKey(parentHex, borough string, req *protocol.BulkPredictRequest) string {
 	raw := fmt.Sprintf(
 		"%s|%d|%s|%s|%s|%s|%s",
 		parentHex,
@@ -20,7 +20,7 @@ func parentCacheKey(parentHex string, req *protocol.BulkPredictRequest) string {
 		req.ComplaintType,
 		req.Descriptor,
 		req.LocationType,
-		req.Borough,
+		borough,
 	)
 	return storage.HashString(raw)
 }
@@ -32,33 +32,38 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	parentResults := make(map[string]protocol.HexPrediction, len(req.H3Hexes))
+	parentResults := make(map[string]protocol.HexPrediction, len(req.Hexes))
 	var missingHexes []string
+	boroughs := make(map[string]string, len(req.Hexes))
 
 	if h.Cache != nil {
-		for _, parentHex := range req.H3Hexes {
-			data, err := h.Cache.GetPrediction(r.Context(), parentCacheKey(parentHex, &req))
+		for _, hex := range req.Hexes {
+			key := parentCacheKey(hex.Hex, hex.Borough, &req)
+			boroughs[hex.Hex] = hex.Borough
+			data, err := h.Cache.GetPrediction(r.Context(), key)
 			if err != nil {
-				missingHexes = append(missingHexes, parentHex)
+				missingHexes = append(missingHexes, hex.Hex)
 				continue
 			}
-
 			var hp protocol.HexPrediction
 			if err := json.Unmarshal(data, &hp); err != nil {
-				logger.Warn("parent cache data corrupted", "parent_hex", parentHex, "error", err)
-				missingHexes = append(missingHexes, parentHex)
+				logger.Warn("parent cache data corrupted", "parent_hex", hex.Hex, "error", err)
+				missingHexes = append(missingHexes, hex.Hex)
 				continue
 			}
-			parentResults[parentHex] = hp
+			parentResults[hex.Hex] = hp
 		}
 	} else {
-		missingHexes = req.H3Hexes
+		for _, hex := range req.Hexes {
+			missingHexes = append(missingHexes, hex.Hex)
+			boroughs[hex.Hex] = hex.Borough
+		}
 	}
 
 	// 7 = avg children per hex at res+1; if VectorizeBulk resolution changes, update this
 	parentHits := int64(len(parentResults)) * 7
 
-	if len(parentResults) == len(req.H3Hexes) {
+	if len(parentResults) == len(req.Hexes) {
 		if h.Cache != nil {
 			h.Cache.IncrBy(r.Context(), "cache_hits", parentHits)
 		}
@@ -70,14 +75,12 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		h.Cache.IncrBy(r.Context(), "cache_hits", parentHits)
 	}
 
-	hexRecords, err := h.Vec.VectorizeBulk(&protocol.BulkPredictRequest{
+	hexRecords, err := h.Vec.VectorizeBulk(missingHexes, boroughs, &protocol.BulkPredictRequest{
 		Timestamp:     req.Timestamp,
 		Agency:        req.Agency,
 		ComplaintType: req.ComplaintType,
 		Descriptor:    req.Descriptor,
 		LocationType:  req.LocationType,
-		Borough:       req.Borough,
-		H3Hexes:       missingHexes,
 	})
 	if err != nil {
 		h.writeVectorizationError(w, err)
@@ -126,7 +129,7 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, hp := range averageByParent(hexRecords, results) {
-		h.writeCache(r.Context(), parentCacheKey(hp.Hex, &req), hp)
+		h.writeCache(r.Context(), parentCacheKey(hp.Hex, boroughs[hp.Hex], &req), hp)
 		parentResults[hp.Hex] = hp
 	}
 
