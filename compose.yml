@@ -48,16 +48,10 @@ services:
 
         restart: unless-stopped
 
-        environment:
-            INFERENCE_PORT: 9001
-
     inference-2:
         image: ghcr.io/pcc-grupo-11/tb2-trabajo-final/inference:latest
 
         restart: unless-stopped
-
-        environment:
-            INFERENCE_PORT: 9001
 
     api:
         image: ghcr.io/pcc-grupo-11/tb2-trabajo-final/api:latest
@@ -65,11 +59,10 @@ services:
         restart: unless-stopped
 
         environment:
-            API_PORT: 8080
             MONGO_URI: mongodb://admin:admin@mongo:27017/admin
             REDIS_ADDR: redis:6379
             JWT_SECRET: ${JWT_SECRET}
-            INFERENCE_ADDRS: inference-1:9001,inference-2:9001
+            INFERENCE_ADDRS: inference-1,inference-2
 
         depends_on:
             mongo:

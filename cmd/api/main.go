@@ -18,6 +18,8 @@ import (
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/vectorizer"
 )
 
+const apiPort = "8080"
+
 func main() {
 	cfg, err := config.LoadAPIConfig()
 	if err != nil {
@@ -26,7 +28,7 @@ func main() {
 	}
 
 	logger.Info("api server starting",
-		"port", cfg.Port,
+		"port", apiPort,
 		"mongo_uri", env.RedactMongoURI(cfg.MongoURI),
 		"redis_addr", cfg.RedisAddr,
 	)
@@ -58,7 +60,7 @@ func main() {
 	}
 	logger.Info("vectorizer loaded", "mappings_dir", cfg.MappingsDir)
 
-	lb, err := clients.NewLoadBalancer(cfg.InferenceAddrs, cfg.InferenceTimeout)
+	lb, err := clients.NewLoadBalancer(cfg.InferenceTCPAddrs(), cfg.InferenceTimeout)
 	if err != nil {
 		logger.Error("invalid load balancer config", "error", err)
 		os.Exit(1)
@@ -76,7 +78,7 @@ func main() {
 	mux.Handle("GET /api/v1/metrics", authSvc.Middleware(http.HandlerFunc(h.Metrics)))
 
 	server := &http.Server{
-		Addr:         ":" + cfg.Port,
+		Addr:         ":" + apiPort,
 		Handler:      handlers.LimitBody(mux),
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,

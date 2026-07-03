@@ -9,16 +9,17 @@ import (
 )
 
 const (
-	DefaultAPIPort          = "8080"
 	DefaultMappingsDir      = "data/artifacts/mappings"
 	DefaultRedisTTL         = 24 * time.Hour
 	DefaultJWTExpiration    = 16 * time.Hour
 	DefaultInferenceTimeout = 5 * time.Second
+
+	tcpPort     = "9001"
+	metricsPort = "9002"
 )
 
 type APIConfig struct {
-	Port             string
-	InferenceAddrs   []string
+	InferenceHosts   []string
 	MongoURI         string
 	RedisAddr        string
 	JWTSecret        string
@@ -49,14 +50,13 @@ func LoadAPIConfig() (*APIConfig, error) {
 		return nil, err
 	}
 
-	addrs := splitAndTrim(inferenceAddrsStr, ",")
-	if len(addrs) == 0 {
+	hosts := splitAndTrim(inferenceAddrsStr, ",")
+	if len(hosts) == 0 {
 		return nil, fmt.Errorf("INFERENCE_ADDRS must contain at least one address")
 	}
 
 	return &APIConfig{
-		Port:             env.GetEnv("API_PORT", DefaultAPIPort),
-		InferenceAddrs:   addrs,
+		InferenceHosts:   hosts,
 		MongoURI:         mongoURI,
 		RedisAddr:        redisAddr,
 		JWTSecret:        jwtSecret,
@@ -65,6 +65,22 @@ func LoadAPIConfig() (*APIConfig, error) {
 		JWTExpiration:    DefaultJWTExpiration,
 		InferenceTimeout: DefaultInferenceTimeout,
 	}, nil
+}
+
+func (c *APIConfig) InferenceTCPAddrs() []string {
+	addrs := make([]string, len(c.InferenceHosts))
+	for i, host := range c.InferenceHosts {
+		addrs[i] = host + ":" + tcpPort
+	}
+	return addrs
+}
+
+func (c *APIConfig) InferenceMetricsAddrs() []string {
+	addrs := make([]string, len(c.InferenceHosts))
+	for i, host := range c.InferenceHosts {
+		addrs[i] = host + ":" + metricsPort
+	}
+	return addrs
 }
 
 func splitAndTrim(s, sep string) []string {
