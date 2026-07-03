@@ -3,6 +3,7 @@ module github.com/PCC-Grupo-11/TB2-Trabajo-final
 go 1.26.1
 
 require (
+	github.com/coder/websocket v1.8.15
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/redis/go-redis/v9 v9.20.1
 	github.com/shirou/gopsutil/v4 v4.26.3

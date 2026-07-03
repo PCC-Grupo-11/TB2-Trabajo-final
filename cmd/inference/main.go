@@ -24,6 +24,7 @@ type metricsResponse struct {
 	RequestsServed int64   `json:"requests_served"`
 	CPUName        string  `json:"cpu_name"`
 	Cores          int     `json:"cores"`
+	TotalRAMGB     float64 `json:"total_ram_gb"`
 }
 
 func main() {
@@ -101,6 +102,7 @@ func main() {
 			RequestsServed: requestsServed.Value(),
 			CPUName:        sysInfo.CPUBrand,
 			Cores:          sysInfo.Cores,
+			TotalRAMGB:     sysInfo.TotalRAMGB,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
