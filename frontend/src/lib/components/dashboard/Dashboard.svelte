@@ -3,12 +3,15 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { auth } from '$lib/stores/auth';
+	import { metrics } from '$lib/stores/metrics.svelte';
 	import { prediction } from '$lib/stores/prediction.svelte';
 	import { heatmap } from '$lib/stores/heatmap.svelte';
 	import Map from './Map.svelte';
 	import type { MapAPI } from './Map.svelte';
 	import PredictionPanel from './PredictionPanel.svelte';
+	import MetricsDrawer from './MetricsDrawer.svelte';
 	import LogOut from '@lucide/svelte/icons/log-out';
+	import Menu from '@lucide/svelte/icons/menu';
 
 	function formatCoord(val: number, type: 'lat' | 'lng'): string {
 		const dir = type === 'lat' ? (val >= 0 ? 'N' : 'S') : val >= 0 ? 'E' : 'W';
@@ -17,9 +20,14 @@
 
 	let activeMode = $state<'prediction' | 'heatmap'>('prediction');
 	let mapAPI: MapAPI | null = $state(null);
+	let drawerOpen = $state(false);
 
 	onMount(() => {
-		if (!auth.isAuthenticated()) goto(resolve('/login'));
+		if (!auth.isAuthenticated()) {
+			goto(resolve('/login'));
+			return;
+		}
+		metrics.connect();
 	});
 
 	function handleCoordinateSelect(lat: number, lng: number) {
@@ -50,7 +58,15 @@
 	<nav
 		class="grid h-12 shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-outline-variant/30 bg-surface px-gutter backdrop-blur-md"
 	>
-		<div></div>
+		<div class="flex items-center">
+			<button
+				onclick={() => (drawerOpen = !drawerOpen)}
+				title="Métricas del cluster"
+				class="flex cursor-pointer items-center text-on-surface-variant transition-colors hover:text-on-surface"
+			>
+				<Menu size={20} strokeWidth={1.5} />
+			</button>
+		</div>
 		<div class="flex items-center gap-stack-lg">
 			{#each [{ mode: 'prediction', label: 'Predicción' }, { mode: 'heatmap', label: 'Mapa de calor' }] as const as tab (tab.mode)}
 				<button
@@ -94,3 +110,5 @@
 		</aside>
 	</div>
 </div>
+
+<MetricsDrawer open={drawerOpen} onclose={() => (drawerOpen = false)} />
