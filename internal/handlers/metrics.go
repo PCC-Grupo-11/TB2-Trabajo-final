@@ -42,7 +42,7 @@ func (h *Handler) Metrics(w http.ResponseWriter, r *http.Request) {
 
 	protocol.WriteJSON(w, http.StatusOK, protocol.MetricsResponse{
 		AvgLatencyMs:    avgLatency,
-		NodeCount:       len(h.Cfg.InferenceAddrs),
+		NodeCount:       len(h.Cfg.InferenceHosts),
 		PredictionCount: predictionCount,
 		CacheHitRate:    cacheHitRate,
 	})

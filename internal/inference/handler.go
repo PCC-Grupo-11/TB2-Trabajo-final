@@ -2,6 +2,7 @@ package inference
 
 import (
 	"net"
+	"sync"
 	"time"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/dataset"
@@ -10,7 +11,24 @@ import (
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/protocol"
 )
 
-func HandleConnection(conn net.Conn, model *ml.Model) {
+type RequestCounter struct {
+	mu    sync.RWMutex
+	count int64
+}
+
+func (rc *RequestCounter) Inc() {
+	rc.mu.Lock()
+	rc.count++
+	rc.mu.Unlock()
+}
+
+func (rc *RequestCounter) Value() int64 {
+	rc.mu.RLock()
+	defer rc.mu.RUnlock()
+	return rc.count
+}
+
+func HandleConnection(conn net.Conn, model *ml.Model, counter *RequestCounter) {
 	defer conn.Close()
 
 	var req protocol.InferenceRequest
@@ -52,6 +70,8 @@ func HandleConnection(conn net.Conn, model *ml.Model) {
 		logger.Error("failed to write response", "error", err)
 		return
 	}
+
+	counter.Inc()
 
 	logger.Info("request completed",
 		"latency_ms", latencyMs,
