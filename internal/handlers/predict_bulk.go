@@ -42,23 +42,36 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 	boroughs := make(map[string]string, totalHexes)
 
 	if h.Cache != nil {
+		allHexes := make([]string, 0, totalHexes)
 		for borough, hexes := range req.Hexes {
 			for _, hex := range hexes {
-				key := parentCacheKey(hex, borough, &req)
 				boroughs[hex] = borough
-				data, err := h.Cache.GetPrediction(r.Context(), key)
-				if err != nil {
-					missingHexes = append(missingHexes, hex)
-					continue
-				}
-				var hp protocol.HexPrediction
-				if err := json.Unmarshal(data, &hp); err != nil {
-					logger.Warn("parent cache data corrupted", "parent_hex", hex, "error", err)
-					missingHexes = append(missingHexes, hex)
-					continue
-				}
-				parentResults[hex] = hp
+				allHexes = append(allHexes, hex)
 			}
+		}
+		parentKeys := make([]string, len(allHexes))
+		keyToHex := make(map[string]string, len(allHexes))
+		for i, hex := range allHexes {
+			parentKeys[i] = parentCacheKey(hex, boroughs[hex], &req)
+			keyToHex[parentKeys[i]] = hex
+		}
+		cached, err := h.Cache.GetPredictionsPipeline(r.Context(), parentKeys)
+		if err != nil {
+			logger.Warn("parent cache pipeline failed", "error", err)
+		}
+		for key, hex := range keyToHex {
+			data, ok := cached[key]
+			if !ok {
+				missingHexes = append(missingHexes, hex)
+				continue
+			}
+			var hp protocol.HexPrediction
+			if err := json.Unmarshal(data, &hp); err != nil {
+				logger.Warn("parent cache data corrupted", "parent_hex", hex, "error", err)
+				missingHexes = append(missingHexes, hex)
+				continue
+			}
+			parentResults[hex] = hp
 		}
 	} else {
 		for borough, hexes := range req.Hexes {
@@ -69,7 +82,6 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// 7 = avg children per hex at res+1; if VectorizeBulk resolution changes, update this
 	parentHits := int64(len(parentResults)) * 7
 
 	if len(parentResults) == totalHexes {
@@ -102,14 +114,31 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 	var uncachedRecords []protocol.PredictRecord
 	uncachedIndices := make([]int, 0, n)
 
-	for i, hr := range hexRecords {
-		cacheKey := storage.CacheKey(hr.Record)
-		if cached := h.checkCache(r.Context(), cacheKey); cached != nil {
-			results[i] = *cached
-			continue
+	if h.Cache != nil {
+		childHashes := make([]string, n)
+		for i, hr := range hexRecords {
+			childHashes[i] = storage.CacheKey(hr.Record)
 		}
-		uncachedRecords = append(uncachedRecords, hr.Record)
-		uncachedIndices = append(uncachedIndices, i)
+		cachedMap, err := h.Cache.GetPredictionsPipeline(r.Context(), childHashes)
+		if err != nil {
+			logger.Warn("child cache pipeline failed", "error", err)
+		}
+		for i, hash := range childHashes {
+			if data, ok := cachedMap[hash]; ok {
+				var cr protocol.PredictionResult
+				if err := json.Unmarshal(data, &cr); err == nil {
+					results[i] = cr
+					continue
+				}
+			}
+			uncachedRecords = append(uncachedRecords, hexRecords[i].Record)
+			uncachedIndices = append(uncachedIndices, i)
+		}
+	} else {
+		for i, hr := range hexRecords {
+			uncachedRecords = append(uncachedRecords, hr.Record)
+			uncachedIndices = append(uncachedIndices, i)
+		}
 	}
 
 	var latencyMs float64
@@ -126,20 +155,49 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		for j, idx := range uncachedIndices {
 			results[idx] = inferResp.Predictions[j]
 		}
-		if h.Cache != nil {
-			for _, idx := range uncachedIndices {
-				cacheKey := storage.CacheKey(hexRecords[idx].Record)
-				h.writeCache(r.Context(), cacheKey, results[idx])
-			}
-			h.Cache.IncrBy(r.Context(), "predictions_count", int64(len(uncachedIndices)))
-			h.Cache.IncrByFloat(r.Context(), "latency_sum", latencyMs)
-			h.Cache.IncrBy(r.Context(), "cache_misses", int64(len(uncachedIndices)))
-		}
 	}
 
-	for _, hp := range averageByParent(hexRecords, results) {
-		h.writeCache(r.Context(), parentCacheKey(hp.Hex, boroughs[hp.Hex], &req), hp)
+	parentAverages := averageByParent(hexRecords, results)
+	for _, hp := range parentAverages {
 		parentResults[hp.Hex] = hp
+	}
+
+	if h.Cache != nil {
+		// Batch-SET child predictions
+		childEntries := make(map[string][]byte, len(uncachedIndices))
+		for _, idx := range uncachedIndices {
+			data, err := json.Marshal(results[idx])
+			if err == nil {
+				childEntries[storage.CacheKey(hexRecords[idx].Record)] = data
+			}
+		}
+		if err := h.Cache.SetPredictionsPipeline(r.Context(), childEntries); err != nil {
+			logger.Warn("child cache pipeline write failed", "error", err)
+		}
+
+		// Batch-SET parent predictions
+		parentEntries := make(map[string][]byte, len(parentAverages))
+		for _, hp := range parentAverages {
+			data, err := json.Marshal(hp)
+			if err == nil {
+				parentEntries[parentCacheKey(hp.Hex, boroughs[hp.Hex], &req)] = data
+			}
+		}
+		if err := h.Cache.SetPredictionsPipeline(r.Context(), parentEntries); err != nil {
+			logger.Warn("parent cache pipeline write failed", "error", err)
+		}
+
+		// Batch metrics
+		counters := map[string]int64{
+			"predictions_count": int64(len(uncachedIndices)),
+			"cache_misses":      int64(len(uncachedIndices)),
+		}
+		floats := map[string]float64{
+			"latency_sum": latencyMs,
+		}
+		if err := h.Cache.IncrMetricsPipeline(r.Context(), counters, floats); err != nil {
+			logger.Warn("metrics pipeline write failed", "error", err)
+		}
 	}
 
 	writeBulkPredictResponse(w, collectHexValues(parentResults), latencyMs, false)
