@@ -80,3 +80,15 @@ func (h *Handler) Health(w http.ResponseWriter, r *http.Request) {
 		"Redis":    redisStatus,
 	})
 }
+
+func (h *Handler) ResetMetrics(w http.ResponseWriter, r *http.Request) {
+	if h.Cache == nil {
+		protocol.WriteJSON(w, http.StatusServiceUnavailable, protocol.ErrorResponse{Error: "redis unavailable"})
+		return
+	}
+	if err := h.Cache.ResetMetrics(r.Context()); err != nil {
+		protocol.WriteJSON(w, http.StatusInternalServerError, protocol.ErrorResponse{Error: "failed to reset metrics"})
+		return
+	}
+	protocol.WriteJSON(w, http.StatusOK, map[string]string{"status": "metrics reset"})
+}

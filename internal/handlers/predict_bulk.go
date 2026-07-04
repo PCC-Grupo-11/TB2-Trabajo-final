@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/logger"
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/protocol"
@@ -26,6 +27,8 @@ func parentCacheKey(parentHex, borough string, req *protocol.BulkPredictRequest)
 }
 
 func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+
 	var req protocol.BulkPredictRequest
 	if err := protocol.ReadMessage(r.Body, &req); err != nil {
 		protocol.WriteJSON(w, http.StatusBadRequest, protocol.ErrorResponse{Error: "invalid request body"})
@@ -150,8 +153,6 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		latencyMs = inferResp.LatencyMs
-
 		for j, idx := range uncachedIndices {
 			results[idx] = inferResp.Predictions[j]
 		}
@@ -161,6 +162,8 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 	for _, hp := range parentAverages {
 		parentResults[hp.Hex] = hp
 	}
+
+	latencyMs = float64(time.Since(start).Nanoseconds()) / 1e6
 
 	if h.Cache != nil {
 		// Batch-SET child predictions
