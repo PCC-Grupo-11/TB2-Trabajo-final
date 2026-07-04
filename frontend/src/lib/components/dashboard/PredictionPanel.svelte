@@ -80,7 +80,7 @@
 				{#if res.cached}
 					<span>Almacenado en cache</span>
 				{:else}
-					<span>Procesado en {res.latency_ms.toFixed(3)} ms</span>
+					<span>Procesado en {res.latency_ms.toFixed(2)} ms</span>
 				{/if}
 			</div>
 		{:else}
