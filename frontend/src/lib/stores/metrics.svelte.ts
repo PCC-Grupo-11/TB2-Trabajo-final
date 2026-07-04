@@ -1,10 +1,13 @@
 import { getToken } from '$lib/api/client';
-import type { InfoMessage, MetricsMessage, WSMessage } from '$lib/types/metrics';
+import type { HistoryPoint, InfoMessage, MetricsMessage, WSMessage } from '$lib/types/metrics';
+
+const MAX_HISTORY = 60;
 
 class MetricsStore {
 	connected = $state(false);
 	info = $state<InfoMessage | null>(null);
 	metrics = $state<MetricsMessage | null>(null);
+	history = $state<HistoryPoint[]>([]);
 
 	private ws: WebSocket | null = null;
 	private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
@@ -32,6 +35,7 @@ class MetricsStore {
 					this.info = msg;
 				} else if (msg.type === 'metrics') {
 					this.metrics = msg;
+					this.recordHistory(msg);
 				}
 			} catch {
 				console.warn('Failed to parse WebSocket message:', event.data);
@@ -68,6 +72,15 @@ class MetricsStore {
 			this.connect();
 		}, this.reconnectDelay);
 		this.reconnectDelay = Math.min(this.reconnectDelay * 1.5, 10000);
+	}
+
+	private recordHistory(msg: MetricsMessage) {
+		const point: HistoryPoint = {
+			ts: new Date(),
+			api: { cpu: msg.api.cpu_percent, mem: msg.api.memory_bytes },
+			nodes: Object.fromEntries(msg.nodes.map((n) => [n.addr, { cpu: n.cpu_percent, mem: n.memory_bytes, req: n.requests_served }]))
+		};
+		this.history = [...this.history.slice(-(MAX_HISTORY - 1)), point];
 	}
 }
 
