@@ -22,6 +22,12 @@ func (rc *RequestCounter) Inc() {
 	rc.mu.Unlock()
 }
 
+func (rc *RequestCounter) Add(n int64) {
+	rc.mu.Lock()
+	rc.count += n
+	rc.mu.Unlock()
+}
+
 func (rc *RequestCounter) Value() int64 {
 	rc.mu.RLock()
 	defer rc.mu.RUnlock()
@@ -71,7 +77,7 @@ func HandleConnection(conn net.Conn, model *ml.Model, counter *RequestCounter) {
 		return
 	}
 
-	counter.Inc()
+	counter.Add(int64(len(req.Records)))
 
 	logger.Info("request completed",
 		"latency_ms", latencyMs,

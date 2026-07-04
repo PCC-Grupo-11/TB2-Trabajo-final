@@ -125,7 +125,7 @@
 						>Latencia promedio</span
 					>
 					<span class="font-mono text-[13px] text-on-surface"
-						>{metrics.metrics.cluster.avg_latency_ms.toFixed(3)} ms</span
+						>{metrics.metrics.cluster.avg_latency_ms.toFixed(2)} ms</span
 					>
 				</div>
 				<div class="flex items-center justify-between">
