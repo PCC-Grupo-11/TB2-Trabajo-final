@@ -15,7 +15,7 @@ import (
 	"github.com/coder/websocket/wsjson"
 )
 
-const pollInterval = 2 * time.Second
+const pollInterval = 1 * time.Second
 
 // Info (static) structs
 type infoNode struct {
