@@ -63,6 +63,60 @@ func (c *Cache) GetFloat64(ctx context.Context, key string) (float64, error) {
 	return c.client.Get(ctx, key).Float64()
 }
 
+func (c *Cache) GetPredictionsPipeline(ctx context.Context, hashes []string) (map[string][]byte, error) {
+	if len(hashes) == 0 {
+		return nil, nil
+	}
+	cmds, err := c.client.Pipelined(ctx, func(pipe redis.Pipeliner) error {
+		for _, h := range hashes {
+			pipe.Get(ctx, "PRED:"+h)
+		}
+		return nil
+	})
+	if err != nil && err != redis.Nil {
+		return nil, err
+	}
+	out := make(map[string][]byte, len(hashes))
+	for i, cmd := range cmds {
+		if getCmd, ok := cmd.(*redis.StringCmd); ok {
+			data, err := getCmd.Bytes()
+			if err == nil {
+				out[hashes[i]] = data
+			}
+		}
+	}
+	return out, nil
+}
+
+func (c *Cache) SetPredictionsPipeline(ctx context.Context, entries map[string][]byte) error {
+	if len(entries) == 0 {
+		return nil
+	}
+	_, err := c.client.Pipelined(ctx, func(pipe redis.Pipeliner) error {
+		for hash, data := range entries {
+			pipe.Set(ctx, "PRED:"+hash, data, c.ttl)
+		}
+		return nil
+	})
+	return err
+}
+
+func (c *Cache) IncrMetricsPipeline(ctx context.Context, counters map[string]int64, floats map[string]float64) error {
+	if len(counters) == 0 && len(floats) == 0 {
+		return nil
+	}
+	_, err := c.client.Pipelined(ctx, func(pipe redis.Pipeliner) error {
+		for k, v := range counters {
+			pipe.IncrBy(ctx, k, v)
+		}
+		for k, v := range floats {
+			pipe.IncrByFloat(ctx, k, v)
+		}
+		return nil
+	})
+	return err
+}
+
 func (c *Cache) Ping(ctx context.Context) error {
 	return c.client.Ping(ctx).Err()
 }
