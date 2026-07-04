@@ -76,6 +76,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/v1/health", h.Health)
+	mux.HandleFunc("GET /api/v1/admin/metrics/reset", h.ResetMetrics)
 	mux.HandleFunc("POST /api/v1/auth/register", h.Register)
 	mux.HandleFunc("POST /api/v1/auth/login", h.Login)
 	mux.Handle("POST /api/v1/predict", authSvc.Middleware(http.HandlerFunc(h.Predict)))

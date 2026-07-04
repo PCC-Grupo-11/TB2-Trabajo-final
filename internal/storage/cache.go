@@ -117,6 +117,10 @@ func (c *Cache) IncrMetricsPipeline(ctx context.Context, counters map[string]int
 	return err
 }
 
+func (c *Cache) ResetMetrics(ctx context.Context) error {
+	return c.client.Del(ctx, "predictions_count", "latency_sum", "cache_hits", "cache_misses").Err()
+}
+
 func (c *Cache) Ping(ctx context.Context) error {
 	return c.client.Ping(ctx).Err()
 }

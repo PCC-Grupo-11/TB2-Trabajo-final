@@ -20,6 +20,8 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	start := time.Now()
+
 	var req protocol.PredictRequest
 	if err := protocol.ReadMessage(r.Body, &req); err != nil {
 		protocol.WriteJSON(w, http.StatusBadRequest, protocol.ErrorResponse{Error: "invalid request body"})
@@ -47,6 +49,7 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result := resp.Predictions[0]
+	result.LatencyMs = float64(time.Since(start).Nanoseconds()) / 1e6
 
 	if h.Repo != nil {
 		go func() {
@@ -64,9 +67,19 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 
 	h.writeCache(r.Context(), cacheKey, result)
 	if h.Cache != nil {
-		h.Cache.IncrCounter(r.Context(), "predictions_count")
-		h.Cache.IncrByFloat(r.Context(), "latency_sum", result.LatencyMs)
-		h.Cache.IncrCounter(r.Context(), "cache_misses")
+		err := h.Cache.IncrMetricsPipeline(r.Context(),
+			map[string]int64{
+				"predictions_count": 1,
+				"cache_misses":      1,
+			},
+			map[string]float64{
+				"latency_sum": result.LatencyMs,
+			},
+		)
+
+		if err != nil {
+			logger.Warn("failed to increment metrics pipeline", "error", err)
+		}
 	}
 
 	h.writePredictResponse(w, result, false)

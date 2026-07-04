@@ -6,7 +6,11 @@
 </script>
 
 {#if open}
-	<div class="fixed top-12 inset-x-0 bottom-0 z-40 bg-black/20" onclick={onclose} role="presentation"></div>
+	<div
+		class="fixed top-12 inset-x-0 bottom-0 z-40 bg-black/20"
+		onclick={onclose}
+		role="presentation"
+	></div>
 {/if}
 
 <aside
@@ -24,13 +28,17 @@
 	{#if !metrics.connected}
 		<div class="px-stack-lg py-stack-md text-[13px] text-on-surface-variant">Conectando...</div>
 	{:else if !metrics.info || !metrics.metrics}
-		<div class="px-stack-lg py-stack-md text-[13px] text-on-surface-variant">Esperando datos...</div>
+		<div class="px-stack-lg py-stack-md text-[13px] text-on-surface-variant">
+			Esperando datos...
+		</div>
 	{:else}
 		<!-- API -->
 		<div class="px-stack-lg pt-5 pb-stack-md">
 			<h3 class="text-[13px] font-semibold text-on-surface">API</h3>
 			<p class="mt-0.5 text-[11px] text-on-surface-variant/60">
-				{metrics.info.api.cpu_name} · {metrics.info.api.cores} cores · {metrics.info.api.total_ram_gb.toFixed(2)} GB RAM
+				{metrics.info.api.cpu_name} · {metrics.info.api.cores} cores · {metrics.info.api.total_ram_gb.toFixed(
+					2
+				)} GB RAM
 			</p>
 
 			<div class="mt-4">
@@ -48,7 +56,8 @@
 		<!-- Inference Nodes -->
 		<div class="px-stack-lg pt-5 pb-stack-md">
 			<h3 class="text-[12px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
-				Nodos de inferencia ({metrics.metrics.cluster.healthy_nodes}/{metrics.metrics.cluster.total_nodes})
+				Nodos de inferencia ({metrics.metrics.cluster.healthy_nodes}/{metrics.metrics.cluster
+					.total_nodes})
 			</h3>
 
 			{#each metrics.metrics.nodes as node, i (node.addr)}
@@ -102,16 +111,31 @@
 			</h3>
 			<div class="mt-3 space-y-2">
 				<div class="flex items-center justify-between">
-					<span class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/70">Predicciones totales</span>
-					<span class="font-mono text-[13px] text-on-surface">{metrics.metrics.cluster.total_predictions}</span>
+					<span
+						class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/70"
+						>Predicciones totales</span
+					>
+					<span class="font-mono text-[13px] text-on-surface"
+						>{metrics.metrics.cluster.total_predictions}</span
+					>
 				</div>
 				<div class="flex items-center justify-between">
-					<span class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/70">Latencia promedio</span>
-					<span class="font-mono text-[13px] text-on-surface">{metrics.metrics.cluster.avg_latency_ms.toFixed(2)} ms</span>
+					<span
+						class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/70"
+						>Latencia promedio</span
+					>
+					<span class="font-mono text-[13px] text-on-surface"
+						>{metrics.metrics.cluster.avg_latency_ms.toFixed(3)} ms</span
+					>
 				</div>
 				<div class="flex items-center justify-between">
-					<span class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/70">Cache hit rate</span>
-					<span class="font-mono text-[13px] text-on-surface">{(metrics.metrics.cluster.cache_hit_rate * 100).toFixed(2)}%</span>
+					<span
+						class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/70"
+						>Cache hit rate</span
+					>
+					<span class="font-mono text-[13px] text-on-surface"
+						>{(metrics.metrics.cluster.cache_hit_rate * 100).toFixed(2)}%</span
+					>
 				</div>
 			</div>
 		</div>

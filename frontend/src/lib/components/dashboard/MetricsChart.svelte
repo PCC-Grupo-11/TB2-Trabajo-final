@@ -2,7 +2,11 @@
 	import { Chart, Svg, Area } from 'layerchart';
 	import type { HistoryPoint } from '$lib/types/metrics';
 
-	let { data, entityKey, showReq = false }: { data: HistoryPoint[]; entityKey: string; showReq?: boolean } = $props();
+	let {
+		data,
+		entityKey,
+		showReq = false
+	}: { data: HistoryPoint[]; entityKey: string; showReq?: boolean } = $props();
 
 	let cpuData = $derived(
 		data.map((p) => ({
@@ -50,10 +54,10 @@
 				>
 					<Svg>
 						<defs>
-						<linearGradient id="grad-cpu-{entityKey}" x1="0" y1="0" x2="0" y2="1">
-							<stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35" />
-							<stop offset="100%" stop-color="#f59e0b" stop-opacity="0.04" />
-						</linearGradient>
+							<linearGradient id="grad-cpu-{entityKey}" x1="0" y1="0" x2="0" y2="1">
+								<stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35" />
+								<stop offset="100%" stop-color="#f59e0b" stop-opacity="0.04" />
+							</linearGradient>
 						</defs>
 						<Area
 							fill="url(#grad-cpu-{entityKey})"
@@ -78,10 +82,10 @@
 				>
 					<Svg>
 						<defs>
-						<linearGradient id="grad-mem-{entityKey}" x1="0" y1="0" x2="0" y2="1">
-							<stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4" />
-							<stop offset="100%" stop-color="#3b82f6" stop-opacity="0.05" />
-						</linearGradient>
+							<linearGradient id="grad-mem-{entityKey}" x1="0" y1="0" x2="0" y2="1">
+								<stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4" />
+								<stop offset="100%" stop-color="#3b82f6" stop-opacity="0.05" />
+							</linearGradient>
 						</defs>
 						<Area
 							fill="url(#grad-mem-{entityKey})"
@@ -99,7 +103,13 @@
 				Peticiones/s
 			</div>
 			<div class="h-10">
-				<Chart data={reqData} x="ts" y="value" yNice padding={{ left: 0, right: 0, top: 4, bottom: 4 }}>
+				<Chart
+					data={reqData}
+					x="ts"
+					y="value"
+					yNice
+					padding={{ left: 0, right: 0, top: 4, bottom: 4 }}
+				>
 					<Svg>
 						<defs>
 							<linearGradient id="grad-req-{entityKey}" x1="0" y1="0" x2="0" y2="1">

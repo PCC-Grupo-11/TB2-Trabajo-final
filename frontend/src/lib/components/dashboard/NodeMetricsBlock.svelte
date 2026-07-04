@@ -29,17 +29,13 @@
 <div class="flex gap-4">
 	<div class="flex flex-col justify-center gap-3 min-w-0 shrink-0 w-28">
 		<div>
-			<p class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant">
-				CPU
-			</p>
+			<p class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant">CPU</p>
 			<p class="mt-0.5 text-[1.3rem] leading-tight font-extrabold text-on-surface">
 				{cpuPercent.toFixed(2)}%
 			</p>
 		</div>
 		<div>
-			<p class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant">
-				RAM
-			</p>
+			<p class="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant">RAM</p>
 			<p class="mt-0.5 text-[1.3rem] leading-tight font-extrabold text-on-surface">
 				{formatBytes(memoryBytes)}
 			</p>
