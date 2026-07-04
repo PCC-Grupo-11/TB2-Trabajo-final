@@ -36,3 +36,9 @@ export interface MetricsMessage {
 }
 
 export type WSMessage = InfoMessage | MetricsMessage;
+
+export interface HistoryPoint {
+	ts: Date;
+	api: { cpu: number; mem: number };
+	nodes: Record<string, { cpu: number; mem: number; req: number }>;
+}
