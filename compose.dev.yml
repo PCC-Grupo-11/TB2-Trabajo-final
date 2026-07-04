@@ -58,6 +58,20 @@ services:
 
         restart: unless-stopped
 
+    inference-3:
+        build:
+            context: .
+            target: inference
+
+        restart: unless-stopped
+
+    inference-4:
+        build:
+            context: .
+            target: inference
+
+        restart: unless-stopped
+
     api:
         build:
             context: .
@@ -69,7 +83,7 @@ services:
             MONGO_URI: mongodb://admin:admin@mongo:27017/admin
             REDIS_ADDR: redis:6379
             JWT_SECRET: ${JWT_SECRET}
-            INFERENCE_ADDRS: inference-1,inference-2
+            INFERENCE_ADDRS: inference-1,inference-2,inference-3,inference-4
 
         depends_on:
             mongo:
@@ -79,6 +93,10 @@ services:
             inference-1:
                 condition: service_started
             inference-2:
+                condition: service_started
+            inference-3:
+                condition: service_started
+            inference-4:
                 condition: service_started
 
     frontend:

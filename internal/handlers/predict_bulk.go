@@ -126,16 +126,24 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			logger.Warn("child cache pipeline failed", "error", err)
 		}
+		var childHits int64
 		for i, hash := range childHashes {
 			if data, ok := cachedMap[hash]; ok {
 				var cr protocol.PredictionResult
 				if err := json.Unmarshal(data, &cr); err == nil {
 					results[i] = cr
+					childHits++
 					continue
 				}
 			}
 			uncachedRecords = append(uncachedRecords, hexRecords[i].Record)
 			uncachedIndices = append(uncachedIndices, i)
+		}
+		if childHits > 0 {
+			err := h.Cache.IncrBy(r.Context(), "cache_hits", childHits)
+			if err != nil {
+				logger.Warn("failed to increment cache hits", "error", err)
+			}
 		}
 	} else {
 		for i, hr := range hexRecords {
@@ -146,7 +154,7 @@ func (h *Handler) PredictBulk(w http.ResponseWriter, r *http.Request) {
 
 	var latencyMs float64
 	if len(uncachedRecords) > 0 {
-		inferResp, err := h.LB.Predict(&protocol.InferenceRequest{Records: uncachedRecords})
+		inferResp, err := h.LB.PredictScatter(uncachedRecords)
 		if err != nil {
 			logger.Error("bulk inference failed", "error", err)
 			protocol.WriteJSON(w, http.StatusServiceUnavailable, protocol.ErrorResponse{Error: "inference failed"})

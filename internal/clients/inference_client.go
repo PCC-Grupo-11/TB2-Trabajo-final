@@ -64,6 +64,61 @@ func (lb *LoadBalancer) Predict(req *protocol.InferenceRequest) (*protocol.Infer
 	return nil, fmt.Errorf("all inference nodes failed: %w", lastErr)
 }
 
+func (lb *LoadBalancer) PredictScatter(records []protocol.PredictRecord) (*protocol.InferenceResponse, error) {
+	n := len(lb.addrs)
+	if n <= 1 || len(records) == 0 {
+		return lb.Predict(&protocol.InferenceRequest{Records: records})
+	}
+
+	chunks := splitRecords(records, n)
+
+	type result struct {
+		resp *protocol.InferenceResponse
+		err  error
+	}
+	results := make([]result, n)
+	var wg sync.WaitGroup
+
+	for i, chunk := range chunks {
+		if len(chunk) == 0 {
+			continue
+		}
+		wg.Add(1)
+		go func(idx int, recs []protocol.PredictRecord) {
+			defer wg.Done()
+			resp, err := lb.Predict(&protocol.InferenceRequest{Records: recs})
+			results[idx] = result{resp: resp, err: err}
+		}(i, chunk)
+	}
+	wg.Wait()
+
+	merged := make([]protocol.PredictionResult, 0, len(records))
+	for _, r := range results {
+		if r.err != nil {
+			return nil, fmt.Errorf("scatter-gather: %w", r.err)
+		}
+		merged = append(merged, r.resp.Predictions...)
+	}
+
+	return &protocol.InferenceResponse{Predictions: merged}, nil
+}
+
+func splitRecords(records []protocol.PredictRecord, n int) [][]protocol.PredictRecord {
+	chunks := make([][]protocol.PredictRecord, n)
+	base := len(records) / n
+	remainder := len(records) % n
+	offset := 0
+	for i := range n {
+		size := base
+		if i < remainder {
+			size++
+		}
+		chunks[i] = records[offset : offset+size]
+		offset += size
+	}
+	return chunks
+}
+
 func (lb *LoadBalancer) nextAddr() string {
 	lb.mu.Lock()
 	defer lb.mu.Unlock()
