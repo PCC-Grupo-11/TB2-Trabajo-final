@@ -1,0 +1,11 @@
+timestamp,latitude,longitude,agency,complaint_type,descriptor,location_type,borough
+1715460406,40.546759,-73.842147,DOB,Drinking,Chronic Stoplight Violation,Building (Non-Residential),Unspecified
+1722254570,40.874715,-74.202184,DOT,Animal-Abuse,Aps,Apartment,BROOKLYN
+1688162808,40.712249,-74.235405,DOB,Street Condition,Suspicious Activity,Street,QUEENS
+1687342719,40.688668,-74.096995,TLC,Abandoned Bike,Window Guard Broken/Missing,Comercial,Unspecified
+1700910372,40.642905,-74.164486,OOS,Hazardous Materials,Cable,Apartment,QUEENS
+1679039726,40.650771,-74.060824,DOE,Urinating In Public,Basin/Sink,Restaurant/Bar/Deli/Bakery,STATEN ISLAND
+1680926141,40.908709,-74.041806,DSNY,Food Establishment,Street Fair Vendor,UNKNOWN,MANHATTAN
+1711294646,40.580761,-74.211745,NYC311-PRD,Drug Activity,Working Contrary To Stop Work Order,Lobby,BRONX
+1729948600,40.597772,-74.194449,DOE,Maintenance Or Facility,Street Light Lamp Dim,Park/Playground,BROOKLYN
+1697391624,40.649214,-73.881404,NYPD,Sidewalk Condition,Supermarket Or Grocery Store,Alley,STATEN ISLAND
