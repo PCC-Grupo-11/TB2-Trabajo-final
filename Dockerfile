@@ -52,9 +52,30 @@ FROM alpine:3.24 AS inference
 COPY --from=build-inference /out/inference /inference
 COPY --from=builder /src/data/artifacts/model.json /models/model.json
 
-ENV INFERENCE_PORT=9001
 ENV MODEL_PATH=/models/model.json
 
 EXPOSE 9001
+EXPOSE 9002
 
 ENTRYPOINT ["/inference"]
+
+# Build frontend
+FROM node:22-alpine AS build-frontend
+
+RUN corepack enable && corepack prepare pnpm@11.9.0 --activate
+
+WORKDIR /app
+
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY frontend/ .
+RUN pnpm build
+
+# Frontend image
+FROM nginx:alpine AS frontend
+
+COPY --from=build-frontend /app/build /usr/share/nginx/html
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80

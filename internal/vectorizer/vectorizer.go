@@ -3,6 +3,8 @@ package vectorizer
 import (
 	"fmt"
 	"math"
+	"runtime"
+	"sync"
 	"time"
 
 	"github.com/PCC-Grupo-11/TB2-Trabajo-final/internal/config"
@@ -35,9 +37,14 @@ func New(mappingsDir string) (*Vectorizer, error) {
 func (v *Vectorizer) Vectorize(input *protocol.PredictRequest) (protocol.PredictRecord, error) {
 	if err := v.validateCategoricals(
 		&input.Agency, &input.ComplaintType,
-		&input.Descriptor, &input.LocationType, &input.Borough,
+		&input.Descriptor, &input.LocationType,
 	); err != nil {
 		return protocol.PredictRecord{}, err
+	}
+	if _, ok := v.loader.BoroughMap[input.Borough]; !ok {
+		if f := catchAll(v.loader.BoroughMap); f != "" {
+			input.Borough = f
+		}
 	}
 
 	t := time.Unix(input.Timestamp, 0).In(v.loc)
@@ -61,59 +68,113 @@ type HexRecord struct {
 	Record    protocol.PredictRecord
 }
 
-func (v *Vectorizer) VectorizeBulk(categories *protocol.BulkPredictRequest) ([]HexRecord, error) {
+func (v *Vectorizer) VectorizeBulk(hexes []string, boroughs map[string]string, categories *protocol.BulkPredictRequest) ([]HexRecord, error) {
 	if err := v.validateCategoricals(
 		&categories.Agency, &categories.ComplaintType,
-		&categories.Descriptor, &categories.LocationType, &categories.Borough,
+		&categories.Descriptor, &categories.LocationType,
 	); err != nil {
 		return nil, err
 	}
 
 	t := time.Unix(categories.Timestamp, 0).In(v.loc)
 
-	var results []HexRecord
+	if len(hexes) == 0 {
+		return nil, nil
+	}
 
-	for _, parentHex := range categories.H3Hexes {
-		cell := h3.CellFromString(parentHex)
-		if !cell.IsValid() {
-			return nil, ValidationError(fmt.Sprintf("invalid hex %q", parentHex))
-		}
+	const childrenPerHex = 7
 
-		res := cell.Resolution()
-		children, err := cell.Children(res + 1)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get children for hex %q: %w", parentHex, err)
-		}
+	results := make([]HexRecord, 0, len(hexes)*childrenPerHex)
+	type hexResult struct {
+		records []HexRecord
+		err     error
+	}
+	hexResults := make([]hexResult, len(hexes))
 
-		for _, child := range children {
-			childHex := child.String()
-			centroid, err := h3.CellToLatLng(child)
-			if err != nil {
-				return nil, fmt.Errorf("failed to get centroid for child hex %q: %w", childHex, err)
+	type workItem struct {
+		idx int
+		hex string
+	}
+
+	workers := min(runtime.NumCPU()*4, len(hexes))
+	jobs := make(chan workItem, workers)
+	defaultBorough := catchAll(v.loader.BoroughMap)
+
+	var wg sync.WaitGroup
+	for w := 0; w < workers; w++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for item := range jobs {
+				borough := boroughs[item.hex]
+				if _, ok := v.loader.BoroughMap[borough]; !ok && defaultBorough != "" {
+					borough = defaultBorough
+				}
+
+				cell := h3.CellFromString(item.hex)
+				if !cell.IsValid() {
+					hexResults[item.idx] = hexResult{err: ValidationError(fmt.Sprintf("invalid hex %q", item.hex))}
+					continue
+				}
+
+				res := cell.Resolution()
+				children, err := cell.Children(res + 1)
+				if err != nil {
+					hexResults[item.idx] = hexResult{err: fmt.Errorf("failed to get children for hex %q: %w", item.hex, err)}
+					continue
+				}
+
+				local := make([]HexRecord, 0, len(children))
+				var childErr error
+				for _, child := range children {
+					childHex := child.String()
+					centroid, err := h3.CellToLatLng(child)
+					if err != nil {
+						childErr = fmt.Errorf("failed to get centroid for child hex %q: %w", childHex, err)
+						break
+					}
+					features := buildFeatures(
+						t,
+						centroid.Lat,
+						centroid.Lng,
+						categories.Agency,
+						categories.ComplaintType,
+						categories.Descriptor,
+						categories.LocationType,
+						borough,
+						v.loader,
+					)
+					local = append(local, HexRecord{
+						ParentHex: item.hex,
+						Record:    protocol.PredictRecord{Features: features},
+					})
+				}
+				if childErr != nil {
+					hexResults[item.idx] = hexResult{err: childErr}
+				} else {
+					hexResults[item.idx] = hexResult{records: local}
+				}
 			}
-			features := buildFeatures(
-				t,
-				centroid.Lat,
-				centroid.Lng,
-				categories.Agency,
-				categories.ComplaintType,
-				categories.Descriptor,
-				categories.LocationType,
-				categories.Borough,
-				v.loader,
-			)
+		}()
+	}
 
-			results = append(results, HexRecord{
-				ParentHex: parentHex,
-				Record:    protocol.PredictRecord{Features: features},
-			})
+	for i, hex := range hexes {
+		jobs <- workItem{idx: i, hex: hex}
+	}
+	close(jobs)
+	wg.Wait()
+
+	for _, hr := range hexResults {
+		if hr.err != nil {
+			return nil, hr.err
 		}
+		results = append(results, hr.records...)
 	}
 
 	return results, nil
 }
 
-func (v *Vectorizer) validateCategoricals(agency, complaint, descriptor, location, borough *string) error {
+func (v *Vectorizer) validateCategoricals(agency, complaint, descriptor, location *string) error {
 	if _, ok := v.loader.AgencyMap[*agency]; !ok {
 		return ValidationError(fmt.Sprintf("unknown agency: %q", *agency))
 	}
@@ -128,11 +189,6 @@ func (v *Vectorizer) validateCategoricals(agency, complaint, descriptor, locatio
 	if _, ok := v.loader.LocationMap[*location]; !ok {
 		if f := catchAll(v.loader.LocationMap); f != "" {
 			*location = f
-		}
-	}
-	if _, ok := v.loader.BoroughMap[*borough]; !ok {
-		if f := catchAll(v.loader.BoroughMap); f != "" {
-			*borough = f
 		}
 	}
 	return nil

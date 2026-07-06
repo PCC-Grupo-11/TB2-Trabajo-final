@@ -51,9 +51,6 @@ services:
 
         restart: unless-stopped
 
-        environment:
-            INFERENCE_PORT: 9001
-
     inference-2:
         build:
             context: .
@@ -61,8 +58,19 @@ services:
 
         restart: unless-stopped
 
-        environment:
-            INFERENCE_PORT: 9001
+    inference-3:
+        build:
+            context: .
+            target: inference
+
+        restart: unless-stopped
+
+    inference-4:
+        build:
+            context: .
+            target: inference
+
+        restart: unless-stopped
 
     api:
         build:
@@ -71,15 +79,11 @@ services:
 
         restart: unless-stopped
 
-        ports:
-            - "8080:8080"
-
         environment:
-            API_PORT: 8080
             MONGO_URI: mongodb://admin:admin@mongo:27017/admin
             REDIS_ADDR: redis:6379
             JWT_SECRET: ${JWT_SECRET}
-            INFERENCE_ADDRS: inference-1:9001,inference-2:9001
+            INFERENCE_ADDRS: inference-1,inference-2,inference-3,inference-4
 
         depends_on:
             mongo:
@@ -90,6 +94,23 @@ services:
                 condition: service_started
             inference-2:
                 condition: service_started
+            inference-3:
+                condition: service_started
+            inference-4:
+                condition: service_started
+
+    frontend:
+        build:
+            context: .
+            target: frontend
+
+        restart: unless-stopped
+
+        ports:
+            - "80:80"
+
+        depends_on:
+            - api
 
 volumes:
     mongo_data:

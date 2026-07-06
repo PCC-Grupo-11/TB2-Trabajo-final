@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@theme {
+	--color-background: #f7f9fb;
+	--color-surface: #ffffff;
+	--color-on-surface: #191c1e;
+	--color-on-surface-variant: #45464d;
+	--color-primary: #000000;
+	--color-on-primary: #ffffff;
+	--color-inverse-surface: #2d3133;
+	--color-outline: #76777d;
+	--color-outline-variant: #c6c6cd;
+
+	--color-prob-1: #98e9d5;
+	--color-prob-2: #7fd97d;
+	--color-prob-3: #c0e06c;
+	--color-prob-4: #f5cc51;
+	--color-prob-5: #f0a94f;
+	--color-prob-6: #df6d34;
+	--color-prob-7: #cd493b;
+	--color-prob-8: #aa2e32;
+
+	--color-surface-container-high: #f0f0f0;
+	--color-prob-bar-bg: #f0f0f0;
+
+	--font-sans: 'Inter', sans-serif;
+
+	--spacing-stack-md: 1rem;
+	--spacing-stack-lg: 2rem;
+	--spacing-gutter: 1.5rem;
+
+	--radius: 0.5rem;
+}
+
+@layer base {
+	body {
+		background-color: var(--color-background);
+		color: var(--color-on-surface);
+		font-family: var(--font-sans);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
